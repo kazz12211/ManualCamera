@@ -60,7 +60,20 @@ extension ViewController {
         // Lens Position
         layoutLensPositionLabel()
         
+        // Shutter Speed Label
+        layoutShutterSpeedLabel()
         
+        // ISO Label
+        layoutIsoLabel()
+        
+        // Exposure Label
+        layoutExposureLabel()
+        
+        // White Balance Label
+        layoutWhiteBalanceLabel()
+        
+        // Setting View
+        layoutSettingView()
     }
 
     private func layoutPreviewView() {
@@ -92,12 +105,12 @@ extension ViewController {
         var f = CGRect(x: 0, y: 0, width: 60, height: 60)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
-            f.origin.x = UIScreen.main.bounds.width - (f.width + 6)
+            f.origin.x = UIScreen.main.bounds.width - (f.width + ViewController.SCREEN_MARGIN)
             f.origin.y = UIScreen.main.bounds.height / 2 - (f.width / 2)
             break
         case .portrait:
             f.origin.x = UIScreen.main.bounds.width / 2 - (f.width / 2)
-            f.origin.y = UIScreen.main.bounds.height - (f.width + 6)
+            f.origin.y = UIScreen.main.bounds.height - (f.height + ViewController.SCREEN_MARGIN)
             break
         default:
             break
@@ -312,7 +325,7 @@ extension ViewController {
     }
     
     private func layoutZoomLabel() {
-        var f = CGRect(x: 0, y: 0, width: 70, height: 18)
+        var f = CGRect(x: 0, y: 0, width: 32, height: 22)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
             f.origin.x = ViewController.TOP_BAR_HEIGHT + previewView.frame.width - f.width
@@ -329,19 +342,216 @@ extension ViewController {
     }
     
     private func layoutLensPositionLabel() {
-        var f = CGRect(x: 0, y: 0, width: 70, height: 18)
+        var f = CGRect(x: 0, y: 0, width: 32, height: 17)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
-            f.origin.x = ViewController.TOP_BAR_HEIGHT + previewView.frame.width - f.width
-            f.origin.y = 4 + zoomLabel.frame.height + 4
+            f.origin.x = focusButton.frame.origin.x + focusButton.frame.width + 4
+            f.origin.y = focusButton.frame.origin.y + focusButton.frame.height / 2 - f.height / 2
+            lensPositionLabel.textAlignment = .left
             break
         case .portrait:
-            f.origin.x = UIScreen.main.bounds.width - f.width
-            f.origin.y = ViewController.TOP_BAR_HEIGHT + 4 + zoomLabel.frame.height + 4
+            f.origin.x = focusButton.frame.origin.x + focusButton.frame.width / 2 - f.width / 2
+            f.origin.y = focusButton.frame.origin.y + focusButton.frame.height + 4
+            lensPositionLabel.textAlignment = .center
             break
         default:
             break
         }
         lensPositionLabel.frame = f
     }
+    
+    private func layoutShutterSpeedLabel() {
+        var f = CGRect(x: 0, y: 0, width: 44, height: 17)
+        switch UIDevice.current.orientation {
+        case .landscapeLeft, .landscapeRight:
+            f.origin.x = shutterSpeedButton.frame.origin.x + shutterSpeedButton.frame.width + 4
+            f.origin.y = shutterSpeedButton.frame.origin.y + shutterSpeedButton.frame.height / 2 - f.height / 2
+            shutterSpeedLabel.textAlignment = .left
+            break
+        case .portrait:
+            f.origin.x = shutterSpeedButton.frame.origin.x + shutterSpeedButton.frame.width / 2 - f.width / 2
+            f.origin.y = shutterSpeedButton.frame.origin.y + shutterSpeedButton.frame.height + 4
+            shutterSpeedLabel.textAlignment = .center
+            break
+        default:
+            break
+        }
+        shutterSpeedLabel.frame = f
+    }
+    
+    private func layoutIsoLabel() {
+        var f = CGRect(x: 0, y: 0, width: 32, height: 17)
+        switch UIDevice.current.orientation {
+        case .landscapeLeft, .landscapeRight:
+            f.origin.x = isoButton.frame.origin.x + isoButton.frame.width + 4
+            f.origin.y = isoButton.frame.origin.y + isoButton.frame.height / 2 - f.height / 2
+            isoLabel.textAlignment = .left
+            break
+        case .portrait:
+            f.origin.x = isoButton.frame.origin.x + isoButton.frame.width / 2 - f.width / 2
+            f.origin.y = isoButton.frame.origin.y + isoButton.frame.height + 4
+            isoLabel.textAlignment = .center
+            break
+        default:
+            break
+        }
+        isoLabel.frame = f
+    }
+
+    private func layoutExposureLabel() {
+        var f = CGRect(x: 0, y: 0, width: 32, height: 17)
+        switch UIDevice.current.orientation {
+        case .landscapeLeft, .landscapeRight:
+            f.origin.x = exposureButton.frame.origin.x + exposureButton.frame.width + 4
+            f.origin.y = exposureButton.frame.origin.y + exposureButton.frame.height / 2 - f.height / 2
+            exposureLabel.textAlignment = .left
+            break
+        case .portrait:
+            f.origin.x = exposureButton.frame.origin.x + isoButton.frame.width / 2 - f.width / 2
+            f.origin.y = exposureButton.frame.origin.y + exposureButton.frame.height + 4
+            exposureLabel.textAlignment = .center
+            break
+        default:
+            break
+        }
+        exposureLabel.frame = f
+    }
+
+    private func layoutWhiteBalanceLabel() {
+        var f = CGRect(x: 0, y: 0, width: 44, height: 17)
+        switch UIDevice.current.orientation {
+        case .landscapeLeft, .landscapeRight:
+            f.origin.x = whiteBalanceButton.frame.origin.x + whiteBalanceButton.frame.width + 4
+            f.origin.y = whiteBalanceButton.frame.origin.y + whiteBalanceButton.frame.height / 2 - f.height / 2
+            whiteBalanceLabel.textAlignment = .left
+            break
+        case .portrait:
+            f.origin.x = whiteBalanceButton.frame.origin.x + whiteBalanceButton.frame.width / 2 - f.width / 2
+            f.origin.y = whiteBalanceButton.frame.origin.y + whiteBalanceButton.frame.height + 4
+            whiteBalanceLabel.textAlignment = .center
+            break
+        default:
+            break
+        }
+        whiteBalanceLabel.frame = f
+    }
+
+    private func layoutSettingView() {
+        var f = CGRect(x: 0, y: 0, width: 172, height: 100)
+        switch UIDevice.current.orientation {
+        case .landscapeLeft, .landscapeRight:
+            f.origin.x = (ViewController.TOP_BAR_HEIGHT + previewView.frame.width) - (ViewController.SCREEN_MARGIN + f.width)
+            f.origin.y = focusSlider.frame.origin.y - (ViewController.SCREEN_MARGIN + f.height)
+            break
+        case .portrait:
+            f.origin.x = UIScreen.main.bounds.width - (ViewController.CONTROL_GAP + f.width)
+            f.origin.y = focusSlider.frame.origin.y - (ViewController.SCREEN_MARGIN + f.height)
+            break
+        default:
+            break
+        }
+        settingView.frame = f
+    }
+    
+    private func hideSettingControls() {
+        whiteBalanceStepper.isHidden = true
+        whiteBalanceValueLabel.isHidden = true
+        exposureStepper.isHidden = true
+        exposureValueLabel.isHidden = true
+        isoStepper.isHidden = true
+        isoValueLabel.isHidden = true
+        isoSwitch.isHidden = true
+        shutterSpeedStepper.isHidden = true
+        shutterSpeedValueLabel.isHidden = true
+        shutterSpeedSwitch.isHidden = true
+    }
+    
+    func layoutWhiteBalanceControl() {
+        hideSettingControls()
+        
+        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 100, height: 17)
+        settingLabel.frame = f
+        settingLabel.text = "White Balance"
+
+        f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 17)
+        f.origin.y = ViewController.CONTROL_GAP + 8 + settingLabel.frame.height
+        whiteBalanceValueLabel.frame = f
+        
+        f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 29)
+        f.origin.y = whiteBalanceValueLabel.frame.origin.y + whiteBalanceValueLabel.frame.height + 4
+        whiteBalanceStepper.frame = f
+        
+        whiteBalanceValueLabel.isHidden = false
+        whiteBalanceStepper.isHidden = false
+    }
+    
+    func layoutExposureControl() {
+        hideSettingControls()
+        
+        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 100, height: 17)
+        settingLabel.frame = f
+        settingLabel.text = "Exposure"
+        
+        f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 17)
+        f.origin.y = ViewController.CONTROL_GAP + 8 + settingLabel.frame.height
+        exposureValueLabel.frame = f
+        
+        f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 29)
+        f.origin.y = exposureValueLabel.frame.origin.y +  exposureValueLabel.frame.height + 4
+        exposureStepper.frame = f
+        
+        exposureValueLabel.isHidden = false
+        exposureStepper.isHidden = false
+    }
+    
+    func layoutIsoControl() {
+        hideSettingControls()
+        
+        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 100, height: 17)
+        settingLabel.frame = f
+        settingLabel.text = "ISO"
+        
+        f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 17)
+        f.origin.y = ViewController.CONTROL_GAP + 8 + settingLabel.frame.height
+        isoValueLabel.frame = f
+        
+        f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 29)
+        f.origin.y = isoValueLabel.frame.origin.y + isoValueLabel.frame.height + 4
+        isoStepper.frame = f
+        
+        f = CGRect(x: 0, y: 0, width: 54, height:29)
+        f.origin.x = isoStepper.frame.origin.x + isoStepper.frame.width + ViewController.CONTROL_GAP
+        f.origin.y = isoValueLabel.frame.origin.y + isoValueLabel.frame.height + 4
+        isoSwitch.frame = f
+        
+        isoValueLabel.isHidden = false
+        isoStepper.isHidden = false
+        isoSwitch.isHidden = false
+    }
+
+    func layoutShutterSpeedControl() {
+        hideSettingControls()
+        
+        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 100, height: 17)
+        settingLabel.frame = f
+        settingLabel.text = "Shutter Speed"
+        
+        f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 17)
+        f.origin.y = ViewController.CONTROL_GAP + 8 + settingLabel.frame.height
+        shutterSpeedValueLabel.frame = f
+        
+        f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 29)
+        f.origin.y = shutterSpeedValueLabel.frame.origin.y + shutterSpeedValueLabel.frame.height + 4
+        shutterSpeedStepper.frame = f
+        
+        f = CGRect(x: 0, y: 0, width: 54, height:29)
+        f.origin.x = shutterSpeedStepper.frame.origin.x + shutterSpeedStepper.frame.width + ViewController.CONTROL_GAP
+        f.origin.y = shutterSpeedValueLabel.frame.origin.y + shutterSpeedValueLabel.frame.height + 4
+        shutterSpeedSwitch.frame = f
+        
+        shutterSpeedValueLabel.isHidden = false
+        shutterSpeedStepper.isHidden = false
+        shutterSpeedSwitch.isHidden = false
+    }
+
 }

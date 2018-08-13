@@ -28,6 +28,7 @@ class Camera : NSObject {
     weak var _delegate: CameraDelegate!
     
     static let CameraDidFinishAutoFocus = Notification.Name("CameraDidFinishAutoFocus")
+    static let CameraDidFinishExposing = Notification.Name("CameraDidFinishExposing")
     
     override init() {
         super.init()
@@ -42,6 +43,7 @@ class Camera : NSObject {
         guard let camera = devices.first else { return }
         
         camera.addObserver(self, forKeyPath: "adjustingFocus", options: [.new], context: nil)
+        camera.addObserver(self, forKeyPath: "adjustingExposure", options: [.new], context: nil)
 
         maxISO = camera.activeFormat.maxISO
         minISO = camera.activeFormat.minISO
@@ -68,6 +70,7 @@ class Camera : NSObject {
     }
 
     var focusing: Bool = false
+    var expososing: Bool = false
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
@@ -82,6 +85,14 @@ class Camera : NSObject {
             } else {
                 focusing = false
                 NotificationCenter.default.post(name: Camera.CameraDidFinishAutoFocus, object: self)
+            }
+        } else if key == "adjustingExposure" {
+            let adjustingExposure = changes[.newKey]
+            if (adjustingExposure! as! Bool) {
+                expososing = true
+            } else {
+                expososing = false
+                NotificationCenter.default.post(name: Camera.CameraDidFinishExposing, object: self)
             }
         }
     }
@@ -290,6 +301,83 @@ class Camera : NSObject {
         guard let cameraInput = input else { return oldZoomScale }
         let camera = cameraInput.device
         return camera.videoZoomFactor
+    }
+    
+    private func exposureDurationIndex(_ duration: CMTime) -> Int {
+        for i in 0...CameraConstants.ExposureDurationValues.count-2 {
+            if CMTimeCompare(duration, CameraConstants.ExposureDurationValues[i]) == 0 {
+                return i
+            } else if CMTimeCompare(duration, CameraConstants.ExposureDurationValues[i+1]) == 0 {
+                return i+1
+            } else if CMTimeCompare(duration, CameraConstants.ExposureDurationValues[i]) == 1 && CMTimeCompare(duration, CameraConstants.ExposureDurationValues[i+1]) == -1 {
+                return i
+            }
+        }
+        return -1
+    }
+    
+    private func isoIndex(_ iso: Float) -> Int {
+        for i in 0...CameraConstants.IsoValues.count-2 {
+            if iso == CameraConstants.IsoValues[i] {
+                return i
+            } else if iso == CameraConstants.IsoValues[i+1] {
+                return i+1
+            } else if iso > CameraConstants.IsoValues[i] && iso < CameraConstants.IsoValues[i+1] {
+                return i
+            }
+        }
+        return -1
+    }
+    
+    func exposureDuration() -> CMTime {
+        guard let cameraInput = input else { return CameraConstants.ExposureDurationValues[0] }
+        let camera = cameraInput.device
+        let duration = camera.exposureDuration
+        let index = exposureDurationIndex(duration)
+        if index >= 0 {
+            return CameraConstants.ExposureDurationValues[index]
+        }
+        return CameraConstants.ExposureDurationValues[0]
+    }
+    
+    func exposureDurationLabel() -> String {
+        guard let cameraInput = input else { return CameraConstants.ExposureDurationLabels[0] }
+        let camera = cameraInput.device
+        let duration = camera.exposureDuration
+        let index = exposureDurationIndex(duration)
+        if index >= 0 {
+            return CameraConstants.ExposureDurationLabels[index]
+        }
+        return CameraConstants.ExposureDurationLabels[0]
+    }
+    
+    func iso() -> Float {
+        guard let cameraInput = input else { return CameraConstants.IsoValues[0] }
+        let camera = cameraInput.device
+        let iso = camera.iso
+        let index = isoIndex(iso)
+        if index >= 0 {
+            return CameraConstants.IsoValues[index]
+        }
+        return CameraConstants.IsoValues[0]
+    }
+    
+    func exposureTargetOffset() -> Float {
+        guard let cameraInput = input else { return 0 }
+        let camera = cameraInput.device
+        return camera.exposureTargetOffset
+    }
+    
+    func exposureTargetBias() -> Float {
+        guard let cameraInput = input else { return 0 }
+        let camera = cameraInput.device
+        return camera.exposureTargetBias
+    }
+    
+    func whiteBalanceGains() -> AVCaptureDevice.WhiteBalanceGains? {
+        guard let cameraInput = input else { return nil }
+        let camera = cameraInput.device
+        return camera.deviceWhiteBalanceGains
     }
 }
 
