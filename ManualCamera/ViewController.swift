@@ -45,6 +45,13 @@ class ViewController: UIViewController {
     @IBOutlet weak var isoSwitch: UISwitch!
     @IBOutlet weak var shutterSpeedSwitch: UISwitch!
     @IBOutlet weak var settingLabel: UILabel!
+    @IBOutlet weak var timelapseButton: UIButton!
+    @IBOutlet weak var timelapseView: UIView!
+    @IBOutlet weak var timelapseCountLabel: UILabel!
+    @IBOutlet weak var timelapseCountStepper: UIStepper!
+    @IBOutlet weak var timelapseIntervalLabel: UILabel!
+    @IBOutlet weak var timelapseIntervalStepper: UIStepper!
+
     
     private let timerButtonImageNames: [String] = ["timer_off", "timer_2s", "timer_5s", "timer_10s"]
     private let flashButtonImageNames: [String] = ["flash_off", "flash_on", "flash_auto"]
@@ -61,6 +68,8 @@ class ViewController: UIViewController {
     var authorized: Bool!
     var selfTimer: SelfTimer!
 
+    private let timelapseCountValues: [Int] = [0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 120, 150, 180, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000]
+    private let timelapseIntervalValues: [TimeInterval] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600, 900, 1800, 3600]
     
     private func authorizeCameraUsage(_ completionHandler: @escaping((_ success: Bool) -> Void)) {
         AVCaptureDevice.requestAccess(for: .video) { (granted) in
@@ -296,6 +305,22 @@ class ViewController: UIViewController {
         shutterSpeedStepper.value = 0
         shutterSpeedStepper.stepValue = 1
         
+        timelapseView.backgroundColor = UIColor.black
+        timelapseView.layer.masksToBounds = true
+        timelapseView.layer.cornerRadius = 8
+        timelapseView.layer.opacity = 1
+        timelapseView.isHidden = true
+        
+        timelapseCountStepper.minimumValue = 0
+        timelapseCountStepper.maximumValue = Double(timelapseCountValues.count - 1)
+        timelapseCountStepper.value = 0
+        timelapseCountStepper.stepValue = 1
+
+        timelapseIntervalStepper.minimumValue = 0
+        timelapseIntervalStepper.maximumValue = Double(timelapseIntervalValues.count - 1)
+        timelapseIntervalStepper.value = 0
+        timelapseIntervalStepper.stepValue = 1
+
         layoutSubviews()
         
         if previewLayer != nil {
@@ -363,9 +388,8 @@ class ViewController: UIViewController {
     }
     
     @IBAction func showTimerControl(_ sender: UIButton) {
-        if flashControl.isHidden == false {
-            flashControl.isHidden = true
-        }
+        flashControl.isHidden = true
+        timelapseView.isHidden = true
         timerControl.isHidden = !timerControl.isHidden
     }
     
@@ -375,11 +399,10 @@ class ViewController: UIViewController {
     }
     
     @IBAction func showFlashControl(_ sender: UIButton) {
-        if timerControl.isHidden == false {
-            timerControl.isHidden = true
-        }
+        timerControl.isHidden = true
+        timelapseView.isHidden = true
         flashControl.isHidden = !flashControl.isHidden
-    }
+   }
     
     @IBAction func flashChanged(_ sender: UISegmentedControl) {
         flashControl.isHidden = true
@@ -387,16 +410,33 @@ class ViewController: UIViewController {
         flashButton.setImage(UIImage(named: flashButtonImageNames[flashControl.selectedSegmentIndex]), for: .normal)
     }
     
+    @IBAction func showTimelapseControl(_ sender: UIButton) {
+        flashControl.isHidden = true
+        timerControl.isHidden = true
+        timelapseView.isHidden = !timelapseView.isHidden
+        timelapseCountLabel.text = "".appendingFormat("x%d", timelapseCountValues[Int(timelapseCountStepper.value)])
+        timelapseIntervalLabel.text = "".appendingFormat("%.0fs", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
+        timelapseIntervalStepper.isEnabled = timelapseCountStepper.value > 0
+        timelapseIntervalStepper.tintColor = timelapseIntervalStepper.isEnabled ? UIColor.orange : UIColor.gray
+        timelapseIntervalLabel.textColor = timelapseIntervalStepper.isEnabled ? UIColor.orange : UIColor.gray
+  }
+    
     @IBAction func showFocusControl(_ sender: UIButton) {
         focusControl.isHidden = !focusControl.isHidden
         focusSlider.isHidden = focusControl.isHidden
         focusSlider.isEnabled = camera.focusMode == .manual
+        focusSlider.minimumTrackTintColor = focusSlider.isEnabled ? UIColor.orange : UIColor.gray
+        focusSlider.maximumTrackTintColor = focusSlider.isEnabled ? UIColor.orange : UIColor.gray
+        focusSlider.thumbTintColor = focusSlider.isEnabled ? UIColor.orange : UIColor.gray
         focusSlider.value = camera.lensPosition()
    }
     
     @IBAction func focusModeChanged(_ sender: UISegmentedControl) {
         camera.focusMode = CameraFocusMode(rawValue: focusControl.selectedSegmentIndex)!
         focusSlider.isEnabled = camera.focusMode == .manual
+        focusSlider.minimumTrackTintColor = focusSlider.isEnabled ? UIColor.orange : UIColor.gray
+        focusSlider.maximumTrackTintColor = focusSlider.isEnabled ? UIColor.orange : UIColor.gray
+        focusSlider.thumbTintColor = focusSlider.isEnabled ? UIColor.orange : UIColor.gray
         focusSlider.value = camera.lensPosition()
         focusButton.setImage(UIImage(named: focusButtonImageNames[camera.focusMode.rawValue]), for: .normal)
         if camera.focusMode == .auto {
@@ -449,6 +489,8 @@ class ViewController: UIViewController {
             exposureStepper.isEnabled = exposureSwitch.isOn
             exposureStepper.value = Double(camera.exposureTargetBias)
             exposureValueLabel.text = "".appendingFormat("%.1f", camera.exposureTargetBias)
+            exposureValueLabel.textColor = exposureStepper.isEnabled ? UIColor.orange : UIColor.gray
+            exposureStepper.tintColor = exposureStepper.isEnabled ? UIColor.orange : UIColor.gray
         }
     }
     
@@ -461,6 +503,8 @@ class ViewController: UIViewController {
             isoStepper.isEnabled = isoSwitch.isOn
             isoStepper.value = Double(camera.indexOfISO())
             isoValueLabel.text = "".appendingFormat("%.0f", camera.iso())
+            isoValueLabel.textColor = isoStepper.isEnabled ? UIColor.orange : UIColor.gray
+            isoStepper.tintColor = isoStepper.isEnabled ? UIColor.orange : UIColor.gray
         }
     }
     
@@ -473,6 +517,8 @@ class ViewController: UIViewController {
             shutterSpeedStepper.isEnabled = shutterSpeedSwitch.isOn
             shutterSpeedStepper.value = Double(camera.indexOfShutterSpeed())
             shutterSpeedValueLabel.text = camera.exposureDurationLabel()
+            shutterSpeedValueLabel.textColor = shutterSpeedStepper.isEnabled ? UIColor.orange : UIColor.gray
+            shutterSpeedStepper.tintColor = shutterSpeedStepper.isEnabled ? UIColor.orange : UIColor.gray
         }
     }
     
@@ -496,6 +542,9 @@ class ViewController: UIViewController {
             camera.exposureMode = .auto
         }
         exposureStepper.isEnabled = sender.isOn
+        exposureValueLabel.text = "".appendingFormat("%.1f", camera.exposureTargetBias)
+        exposureValueLabel.textColor = exposureStepper.isEnabled ? UIColor.orange : UIColor.gray
+        exposureStepper.tintColor = exposureStepper.isEnabled ? UIColor.orange : UIColor.gray
     }
     
     @IBAction func changeISO(_ sender: UIStepper) {
@@ -513,7 +562,9 @@ class ViewController: UIViewController {
         }
         isoStepper.isEnabled = sender.isOn
         isoValueLabel.text = "".appendingFormat("%.0f", camera.iso())
-    }
+        isoValueLabel.textColor = isoStepper.isEnabled ? UIColor.orange : UIColor.gray
+        isoStepper.tintColor = isoStepper.isEnabled ? UIColor.orange : UIColor.gray
+   }
     
     @IBAction func changeShutterSpeed(_ sender: UIStepper) {
         let index = Int(sender.value)
@@ -530,7 +581,20 @@ class ViewController: UIViewController {
         }
         shutterSpeedStepper.isEnabled = sender.isOn
         shutterSpeedValueLabel.text = camera.exposureDurationLabel()
+        shutterSpeedValueLabel.textColor = shutterSpeedStepper.isEnabled ? UIColor.orange : UIColor.gray
+        shutterSpeedStepper.tintColor = shutterSpeedStepper.isEnabled ? UIColor.orange : UIColor.gray
     }
+    
+    @IBAction func changeTimelapseCount(_ sender: UIStepper) {
+        timelapseCountLabel.text = "".appendingFormat("x%d", timelapseCountValues[Int(timelapseCountStepper.value)])
+        timelapseIntervalStepper.isEnabled = timelapseCountStepper.value > 0
+        timelapseIntervalStepper.tintColor = timelapseIntervalStepper.isEnabled ? UIColor.orange : UIColor.gray
+        timelapseIntervalLabel.textColor = timelapseIntervalStepper.isEnabled ? UIColor.orange : UIColor.gray
+    }
+    
+    @IBAction func changeTimelapseInterval(_ sender: UIStepper) {
+        timelapseIntervalLabel.text = "".appendingFormat("%.0fs", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
+   }
 }
 
 extension ViewController: CameraDelegate {

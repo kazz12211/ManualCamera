@@ -30,6 +30,12 @@ extension ViewController {
         // Flash Control
         layoutFlashControl()
         
+        // Timelapse Button
+        layoutTimelapseButton()
+        
+        // Timelapse Control
+        layoutTimelapseControl()
+        
         // Focus Button
         layoutFocusButton()
         
@@ -122,11 +128,11 @@ extension ViewController {
         var f = CGRect(x: 0, y: 0, width: 32, height: 32)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
-            f.origin.x = 16
-            f.origin.y = UIScreen.main.bounds.height - 48
+            f.origin.x = ViewController.SCREEN_MARGIN
+            f.origin.y = ViewController.SCREEN_MARGIN + f.height + ViewController.CONTROL_GAP
             break
         case .portrait:
-            f.origin.x = 16
+            f.origin.x = UIScreen.main.bounds.width - (ViewController.SCREEN_MARGIN + f.width * 2 + ViewController.CONTROL_GAP)
             f.origin.y = 24
             break
         default:
@@ -136,15 +142,15 @@ extension ViewController {
     }
     
     private func layoutSelfTimerControl() {
-        var f = CGRect(x: 0, y: 0, width: 121, height: 28)
+        var f = CGRect(x: 0, y: 0, width: 140, height: 28)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
-            f.origin.x = 64
-            f.origin.y = UIScreen.main.bounds.height - 46
+            f.origin.x = ViewController.TOP_BAR_HEIGHT + ViewController.CONTROL_GAP
+            f.origin.y = ViewController.SCREEN_MARGIN + f.height + ViewController.CONTROL_GAP + 4
             break
         case .portrait:
-            f.origin.x = 64
-            f.origin.y = 26
+            f.origin.x = UIScreen.main.bounds.width - (ViewController.SCREEN_MARGIN + f.width)
+            f.origin.y = ViewController.TOP_BAR_HEIGHT + ViewController.CONTROL_GAP
             break
         default:
             break
@@ -156,11 +162,11 @@ extension ViewController {
         var f = CGRect(x: 0, y: 0, width: 32, height: 32)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
-            f.origin.x = 16
-            f.origin.y = 16
+            f.origin.x = ViewController.SCREEN_MARGIN
+            f.origin.y = ViewController.SCREEN_MARGIN
             break
         case .portrait:
-            f.origin.x = UIScreen.main.bounds.width - 48
+            f.origin.x = UIScreen.main.bounds.width - (ViewController.SCREEN_MARGIN + f.width)
             f.origin.y = 24
             break
         default:
@@ -173,17 +179,61 @@ extension ViewController {
         var f = CGRect(x: 0, y: 0, width: 121, height: 28)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
-            f.origin.x = ViewController.TOP_BAR_HEIGHT + 4
+            f.origin.x = ViewController.TOP_BAR_HEIGHT + ViewController.CONTROL_GAP
             f.origin.y = ViewController.SCREEN_MARGIN + 2
             break
         case .portrait:
-            f.origin.x = UIScreen.main.bounds.width - (flashButton.frame.width + ViewController.CONTROL_GAP + ViewController.SCREEN_MARGIN + f.width)
-            f.origin.y = 26
+            f.origin.x = UIScreen.main.bounds.width - (ViewController.SCREEN_MARGIN + f.width)
+            f.origin.y = ViewController.TOP_BAR_HEIGHT + ViewController.CONTROL_GAP
             break
         default:
             break
         }
         flashControl.frame = f
+    }
+    
+    private func layoutTimelapseButton() {
+        var f = CGRect(x: 0, y: 0, width: 32, height: 32)
+        switch UIDevice.current.orientation {
+        case .landscapeLeft, .landscapeRight:
+            f.origin.x = ViewController.SCREEN_MARGIN
+            f.origin.y = ViewController.SCREEN_MARGIN + (f.height + ViewController.CONTROL_GAP) * 2
+            break
+        case .portrait:
+            f.origin.x = UIScreen.main.bounds.width - (ViewController.SCREEN_MARGIN + f.width * 3 + ViewController.CONTROL_GAP * 2)
+            f.origin.y = 24
+            break
+        default:
+            break
+        }
+        timelapseButton.frame = f
+    }
+    
+    private func layoutTimelapseControl() {
+        var f = CGRect(x: 0, y: 0, width: 116, height: 126)
+        switch UIDevice.current.orientation {
+        case .landscapeLeft, .landscapeRight:
+            f.origin.x = ViewController.TOP_BAR_HEIGHT + ViewController.CONTROL_GAP
+            f.origin.y = ViewController.SCREEN_MARGIN + 2
+            break
+        case .portrait:
+            f.origin.x = UIScreen.main.bounds.width - (ViewController.CONTROL_GAP + f.width)
+            f.origin.y = ViewController.TOP_BAR_HEIGHT + ViewController.CONTROL_GAP
+            break
+        default:
+            break
+        }
+        
+        timelapseView.frame = f
+        
+        f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 94, height: 17)
+        timelapseCountLabel.frame = f
+        f = CGRect(x: ViewController.CONTROL_GAP, y: timelapseCountLabel.frame.height + timelapseCountLabel.frame.origin.y + 4, width: 94, height: 29)
+        timelapseCountStepper.frame = f
+        f = CGRect(x: ViewController.CONTROL_GAP, y: timelapseCountStepper.frame.height + timelapseCountStepper.frame.origin.y + 4, width: 94, height: 17)
+        timelapseIntervalLabel.frame = f
+        f = CGRect(x: ViewController.CONTROL_GAP, y: timelapseIntervalLabel.frame.height + timelapseIntervalLabel.frame.origin.y + 4, width: 94, height: 29)
+        timelapseIntervalStepper.frame = f
     }
     
     private func layoutFocusButton() {
@@ -325,15 +375,15 @@ extension ViewController {
     }
     
     private func layoutZoomLabel() {
-        var f = CGRect(x: 0, y: 0, width: 32, height: 22)
+        var f = CGRect(x: 0, y: 0, width: 32, height: 20)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
             f.origin.x = ViewController.TOP_BAR_HEIGHT + previewView.frame.width - f.width
-            f.origin.y = 4
+            f.origin.y = 0
             break
         case .portrait:
-            f.origin.x = UIScreen.main.bounds.width - f.width
-            f.origin.y = ViewController.TOP_BAR_HEIGHT + 4
+            f.origin.x = 4
+            f.origin.y = ViewController.TOP_BAR_HEIGHT
             break
         default:
             break
@@ -441,7 +491,7 @@ extension ViewController {
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
             f.origin.x = (ViewController.TOP_BAR_HEIGHT + previewView.frame.width) - (ViewController.SCREEN_MARGIN + f.width)
-            f.origin.y = focusSlider.frame.origin.y - (ViewController.SCREEN_MARGIN + f.height)
+            f.origin.y = ViewController.SCREEN_MARGIN + 2
             break
         case .portrait:
             f.origin.x = UIScreen.main.bounds.width - (ViewController.CONTROL_GAP + f.width)

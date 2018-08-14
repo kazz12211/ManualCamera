@@ -32,21 +32,6 @@
                                     <action selector="showTimerControl:" destination="BYZ-38-t0r" eventType="touchUpInside" id="C6Q-RL-UAq"/>
                                 </connections>
                             </button>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="WhZ-40-8HK">
-                                <rect key="frame" x="64" y="23" width="121" height="29"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <segments>
-                                    <segment title="OFF"/>
-                                    <segment title="2s"/>
-                                    <segment title="5s"/>
-                                    <segment title="10s"/>
-                                </segments>
-                                <color key="tintColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <connections>
-                                    <action selector="timerChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="s87-Hb-NsF"/>
-                                </connections>
-                            </segmentedControl>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gL8-av-SYs">
                                 <rect key="frame" x="331" y="19" width="32" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -57,7 +42,7 @@
                                 </connections>
                             </button>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="4Fs-c0-MFW">
-                                <rect key="frame" x="208" y="23" width="121" height="29"/>
+                                <rect key="frame" x="279" y="5" width="121" height="29"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <segments>
@@ -246,8 +231,83 @@
                                 </attributedString>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="WhZ-40-8HK">
+                                <rect key="frame" x="-48" y="5" width="121" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <segments>
+                                    <segment title="OFF"/>
+                                    <segment title="2s"/>
+                                    <segment title="5s"/>
+                                    <segment title="10s"/>
+                                </segments>
+                                <color key="tintColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="timerChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="s87-Hb-NsF"/>
+                                </connections>
+                            </segmentedControl>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m0q-cS-9qU">
+                                <rect key="frame" x="154" y="16" width="32" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" image="timelapse"/>
+                                <connections>
+                                    <action selector="showTimelapseControl:" destination="BYZ-38-t0r" eventType="touchUpInside" id="v1H-g4-Fqd"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mGM-m5-KV5">
+                                <rect key="frame" x="90" y="-29" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RKT-KE-O2g">
+                                        <rect key="frame" x="17" y="35" width="44" height="17"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <attributedString key="attributedText">
+                                            <fragment content="count">
+                                                <attributes>
+                                                    <color key="NSColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <font key="NSFont" size="12" name="GillSans"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                </attributes>
+                                            </fragment>
+                                        </attributedString>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pq1-7T-AmA">
+                                        <rect key="frame" x="105" y="44" width="44" height="17"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <attributedString key="attributedText">
+                                            <fragment content="interval">
+                                                <attributes>
+                                                    <color key="NSColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <font key="NSFont" size="12" name="GillSans"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                </attributes>
+                                            </fragment>
+                                        </attributedString>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="rgY-UC-Xja">
+                                        <rect key="frame" x="17" y="69" width="94" height="29"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <connections>
+                                            <action selector="changeTimelapseCount:" destination="BYZ-38-t0r" eventType="valueChanged" id="4t1-R6-FUg"/>
+                                        </connections>
+                                    </stepper>
+                                    <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="g92-0f-35G">
+                                        <rect key="frame" x="128" y="69" width="94" height="29"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="tintColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <connections>
+                                            <action selector="changeTimelapseInterval:" destination="BYZ-38-t0r" eventType="valueChanged" id="0wI-yQ-iui"/>
+                                        </connections>
+                                    </stepper>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Oc-4L-uTO">
-                                <rect key="frame" x="-26" y="537" width="375" height="141"/>
+                                <rect key="frame" x="47" y="506" width="375" height="141"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ws4-kd-vnY">
@@ -413,6 +473,12 @@
                         <outlet property="shutterSpeedSwitch" destination="9mD-BO-JuN" id="4RT-na-nzb"/>
                         <outlet property="shutterSpeedValueLabel" destination="CKT-VR-qk3" id="mfV-EA-AER"/>
                         <outlet property="takeButton" destination="cCW-rj-4K4" id="eZO-mz-pjO"/>
+                        <outlet property="timelapseButton" destination="m0q-cS-9qU" id="Bdg-m2-kTg"/>
+                        <outlet property="timelapseCountLabel" destination="RKT-KE-O2g" id="hEK-S2-SN8"/>
+                        <outlet property="timelapseCountStepper" destination="rgY-UC-Xja" id="2Vf-hY-vMJ"/>
+                        <outlet property="timelapseIntervalLabel" destination="pq1-7T-AmA" id="d8a-V7-V85"/>
+                        <outlet property="timelapseIntervalStepper" destination="g92-0f-35G" id="MJU-X7-wX4"/>
+                        <outlet property="timelapseView" destination="mGM-m5-KV5" id="NSD-Ua-Qca"/>
                         <outlet property="timerButton" destination="gJo-m4-TzK" id="yj4-oG-XHH"/>
                         <outlet property="timerControl" destination="WhZ-40-8HK" id="6Kw-FA-S6v"/>
                         <outlet property="whiteBalanceButton" destination="ot9-Qh-G0F" id="YsZ-6c-KUu"/>
@@ -434,6 +500,7 @@
         <image name="icon_camera" width="32" height="32"/>
         <image name="iso" width="32" height="32"/>
         <image name="shutter" width="32" height="32"/>
+        <image name="timelapse" width="32" height="32"/>
         <image name="timer_off" width="32" height="32"/>
         <image name="wb" width="32" height="32"/>
     </resources>
