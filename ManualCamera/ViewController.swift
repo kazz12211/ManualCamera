@@ -36,6 +36,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var whiteBalanceStepper: UIStepper!
     @IBOutlet weak var whiteBalanceValueLabel: UILabel!
     @IBOutlet weak var exposureStepper: UIStepper!
+    @IBOutlet weak var exposureSwitch: UISwitch!
     @IBOutlet weak var exposureValueLabel: UILabel!
     @IBOutlet weak var isoStepper: UIStepper!
     @IBOutlet weak var isoValueLabel: UILabel!
@@ -280,6 +281,11 @@ class ViewController: UIViewController {
         whiteBalanceStepper.value = 0
         whiteBalanceStepper.stepValue = 1
         
+        exposureStepper.minimumValue = Double(camera.minExposureTargetBias)
+        exposureStepper.maximumValue = Double(camera.maxExposureTargetBias)
+        exposureStepper.value = Double(camera.exposureTargetBias())
+        exposureStepper.stepValue = 0.5
+        
         layoutSubviews()
         
         if previewLayer != nil {
@@ -347,6 +353,9 @@ class ViewController: UIViewController {
     }
     
     @IBAction func showTimerControl(_ sender: UIButton) {
+        if flashControl.isHidden == false {
+            flashControl.isHidden = true
+        }
         timerControl.isHidden = !timerControl.isHidden
     }
     
@@ -356,6 +365,9 @@ class ViewController: UIViewController {
     }
     
     @IBAction func showFlashControl(_ sender: UIButton) {
+        if timerControl.isHidden == false {
+            timerControl.isHidden = true
+        }
         flashControl.isHidden = !flashControl.isHidden
     }
     
@@ -423,6 +435,9 @@ class ViewController: UIViewController {
             hideSettingView()
         } else {
             showSettingView(mode: .exposure)
+            exposureSwitch.isOn = camera.exposureMode == .manualExposure
+            exposureStepper.isEnabled = exposureSwitch.isOn
+            exposureValueLabel.text = "".appendingFormat("%.1f", camera.exposureTargetBias)
         }
     }
     
@@ -446,7 +461,22 @@ class ViewController: UIViewController {
         let index = Int(sender.value)
         whiteBalanceValueLabel.text = CameraConstants.WhiteBalanceLabels[index]
         whiteBalanceLabel.text = CameraConstants.WhiteBalanceLabels[index]
-        camera.selectWhiteBalance(index: index)
+        camera.selectedWhiteBalanceIndex = index
+    }
+    
+    @IBAction func changeExposure(_ sender: UIStepper) {
+        let value = Float(sender.value)
+        exposureValueLabel.text = "".appendingFormat("%.1f", value)
+        camera.exposureTargetBias = value
+    }
+    
+    @IBAction func toggleExposure(_ sender: UISwitch) {
+        if sender.isOn {
+            camera.exposureMode = .manualExposure
+       } else {
+            camera.exposureMode = .autoExposure
+        }
+        exposureStepper.isEnabled = sender.isOn
     }
 }
 
@@ -461,15 +491,17 @@ extension ViewController: CameraDelegate {
     func cameraDidFinishExposing(_ camera: Camera, device: AVCaptureDevice) {
         shutterSpeedLabel.text = (camera as! ManualCamera).exposureDurationLabel()
         isoLabel.text = "".appendingFormat("%.0f", camera.iso())
-        let exposureTargetBias = device.exposureTargetBias
-        let sign = exposureTargetBias > 0 ? "+" : exposureTargetBias < 0 ? "-" : ""
-        exposureLabel.text = "".appendingFormat("%@%.1f", sign, fabs(exposureTargetBias))
+        exposureLabel.text = "".appendingFormat("%.1f", device.exposureTargetBias)
     }
     
     func cameraDidFinishWhiteBalancing(_ camera: Camera, device: AVCaptureDevice) {
         let wb = device.deviceWhiteBalanceGains
         print(wb)
-        
+    }
+    
+    func cameraDidFinishSettingExposureTargetBias(_ camera: Camera, device: AVCaptureDevice) {
+        exposureLabel.text = "".appendingFormat("%.1f", device.exposureTargetBias)
+        exposureValueLabel.text = "".appendingFormat("%.1f", device.exposureTargetBias)
     }
 }
 

@@ -16,6 +16,7 @@ import Photos
     @objc optional func cameraDidFinishFocusing(_ camera: Camera, device: AVCaptureDevice)
     @objc optional func cameraDidFinishExposing(_ camera: Camera, device: AVCaptureDevice)
     @objc optional func cameraDidFinishWhiteBalancing(_ camera: Camera, device: AVCaptureDevice)
+    @objc optional func cameraDidFinishSettingExposureTargetBias(_ camera: Camera, device: AVCaptureDevice)
 }
 
 class Camera : NSObject {
@@ -25,6 +26,8 @@ class Camera : NSObject {
     var minISO: Float!
     var maxExposureDuration: CMTime!
     var minExposureDuration: CMTime!
+    var maxExposureTargetBias: Float!
+    var minExposureTargetBias: Float!
     var input: AVCaptureDeviceInput!
     var camera: AVCaptureDevice!
     var output: AVCapturePhotoOutput!
@@ -52,6 +55,14 @@ class Camera : NSObject {
         minISO = camera.activeFormat.minISO
         maxExposureDuration = camera.activeFormat.maxExposureDuration
         minExposureDuration = camera.activeFormat.minExposureDuration
+        maxExposureTargetBias = camera.maxExposureTargetBias
+        minExposureTargetBias = camera.minExposureTargetBias
+        print("maxISO: \(maxISO)")
+        print("minISO: \(minISO)")
+        print("maxExposureDuration: \(maxExposureDuration)")
+        print("minExposureDuration: \(minExposureDuration)")
+        print("maxExposureTargetBias: \(maxExposureTargetBias)")
+        print("minExposureTargetBias: \(minExposureTargetBias)")
 
         do {
             self.input = try AVCaptureDeviceInput(device: camera)
@@ -205,6 +216,22 @@ class Camera : NSObject {
         _setExposureMode(.continuousAutoExposure)
     }
     
+    func setExposure(_ exposure: Float) {
+        if camera.isExposureModeSupported(.locked) {
+            do {
+                try camera.lockForConfiguration()
+                camera.setExposureTargetBias(exposure) { (time) in
+                    self.camera.unlockForConfiguration()
+                    if self._delegate != nil && self._delegate.responds(to: #selector(CameraDelegate.cameraDidFinishSettingExposureTargetBias(_:device:))) {
+                        self._delegate.cameraDidFinishSettingExposureTargetBias!(self, device: self.camera)
+                    }
+                }
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
     func setExposureModeCustom(exposureDuration: CMTime, iso: Float, complationHandler handler: @escaping() -> (Swift.Void)) {
         if camera.isFocusModeSupported(.locked) {
             do {
@@ -259,6 +286,9 @@ class Camera : NSObject {
                 camera.exposureMode = mode
             }
             camera.unlockForConfiguration()
+            if self._delegate != nil && self._delegate.responds(to: #selector(CameraDelegate.cameraDidFinishSettingExposureTargetBias(_:device:))) {
+                self._delegate.cameraDidFinishSettingExposureTargetBias!(self, device: self.camera)
+            }
         } catch {
             print(error)
         }

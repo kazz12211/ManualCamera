@@ -458,6 +458,7 @@ extension ViewController {
         whiteBalanceValueLabel.isHidden = true
         exposureStepper.isHidden = true
         exposureValueLabel.isHidden = true
+        exposureSwitch.isHidden = true
         isoStepper.isHidden = true
         isoValueLabel.isHidden = true
         isoSwitch.isHidden = true
@@ -500,8 +501,14 @@ extension ViewController {
         f.origin.y = exposureValueLabel.frame.origin.y +  exposureValueLabel.frame.height + 4
         exposureStepper.frame = f
         
+        f = CGRect(x: 0, y: 0, width: 54, height:29)
+        f.origin.x = exposureStepper.frame.origin.x + exposureStepper.frame.width + ViewController.CONTROL_GAP
+        f.origin.y = exposureValueLabel.frame.origin.y + exposureValueLabel.frame.height + 4
+        exposureSwitch.frame = f
+
         exposureValueLabel.isHidden = false
         exposureStepper.isHidden = false
+        exposureSwitch.isHidden = false
     }
     
     func layoutIsoControl() {

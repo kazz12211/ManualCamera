@@ -23,14 +23,47 @@ enum SettingMode: Int {
     case whiteBalance = 4
 }
 
+enum ExposureMode: Int {
+    case autoExposure = 0
+    case manualExposure = 1
+}
+
 class ManualCamera: Camera {
     
     var settingMode: SettingMode = .none
     var focusMode: FocusMode = .autoFocus
     var flashMode: AVCaptureDevice.FlashMode = .off
+    var exposureMode: ExposureMode = .autoExposure {
+        didSet {
+            if exposureMode == .autoExposure {
+                exposureTargetBias = 0
+                setExposure(exposureTargetBias)
+                setContinuousAutoExposure()
+           } else {
+                setExposure(exposureTargetBias)
+            }
+        }
+    }
     var whiteBalance: AVCaptureDevice.WhiteBalanceGains!
     var whiteBalanceValues: [AVCaptureDevice.WhiteBalanceGains?] = []
-    var selectedWhiteBalanceIndex: Int = 0
+    var selectedWhiteBalanceIndex: Int = 0 {
+        didSet {
+            if selectedWhiteBalanceIndex == 0 {
+                setContinuousAutoWhiteBalance()
+            } else {
+                setWhiteBalance(gains: whiteBalanceValues[selectedWhiteBalanceIndex]!) { () -> (Void) in
+                }
+            }
+        }
+    }
+    
+    var exposureTargetBias: Float = 0.0 {
+        didSet {
+            if exposureMode == .manualExposure {
+                setExposure(exposureTargetBias)
+            }
+        }
+    }
     
     override init() {
         super.init()
@@ -47,21 +80,19 @@ class ManualCamera: Camera {
     }
     
     func reset() {
-        setAutoWhiteBalance()
+        settingMode = .none
+        focusMode = .autoFocus
+        flashMode = .off
+        exposureMode = .autoExposure
+        selectedWhiteBalanceIndex = 0
+
+        setContinuousAutoWhiteBalance()
         setContinuousAutoExposure()
         autoFocus(at: CGPoint(x:0.5, y: 0.5))
+        
+        exposureTargetBias = camera.exposureTargetBias
     }
-    
-    func selectWhiteBalance(index: Int) {
-        selectedWhiteBalanceIndex = index
-        if index == 0 {
-            setAutoWhiteBalance()
-        } else {
-            setWhiteBalance(gains: whiteBalanceValues[index]!) { () -> (Void) in
-            }
-        }
-    }
-    
+        
     func takePhoto(orientation: AVCaptureVideoOrientation) {
         super.takePhoto(flashMode: flashMode, orientation: orientation)
     }
