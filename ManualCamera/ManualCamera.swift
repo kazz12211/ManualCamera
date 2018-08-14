@@ -10,12 +10,12 @@ import UIKit
 import AVFoundation
 import Photos
 
-enum FocusMode: Int {
-    case autoFocus = 0
-    case manualFocus = 1
+enum CameraFocusMode: Int {
+    case auto = 0
+    case manual = 1
 }
 
-enum SettingMode: Int {
+enum CameraSettingMode: Int {
     case none = 0
     case shutterSpeed = 1
     case iso = 2
@@ -23,19 +23,29 @@ enum SettingMode: Int {
     case whiteBalance = 4
 }
 
-enum ExposureMode: Int {
-    case autoExposure = 0
-    case manualExposure = 1
+enum CameraExposureMode: Int {
+    case auto = 0
+    case manual = 1
+}
+
+enum CameraISOMode: Int {
+    case auto = 0
+    case manual = 1
+}
+
+enum CameraShutterMode: Int {
+    case auto = 0
+    case manual = 1
 }
 
 class ManualCamera: Camera {
     
-    var settingMode: SettingMode = .none
-    var focusMode: FocusMode = .autoFocus
+    var settingMode: CameraSettingMode = .none
+    var focusMode: CameraFocusMode = .auto
     var flashMode: AVCaptureDevice.FlashMode = .off
-    var exposureMode: ExposureMode = .autoExposure {
+    var exposureMode: CameraExposureMode = .auto {
         didSet {
-            if exposureMode == .autoExposure {
+            if exposureMode == .auto {
                 exposureTargetBias = 0
                 setExposure(exposureTargetBias)
                 setContinuousAutoExposure()
@@ -44,7 +54,7 @@ class ManualCamera: Camera {
             }
         }
     }
-    var whiteBalance: AVCaptureDevice.WhiteBalanceGains!
+    var whiteBalanceValue: AVCaptureDevice.WhiteBalanceGains!
     var whiteBalanceValues: [AVCaptureDevice.WhiteBalanceGains?] = []
     var selectedWhiteBalanceIndex: Int = 0 {
         didSet {
@@ -59,11 +69,51 @@ class ManualCamera: Camera {
     
     var exposureTargetBias: Float = 0.0 {
         didSet {
-            if exposureMode == .manualExposure {
+            if exposureMode == .manual {
                 setExposure(exposureTargetBias)
             }
         }
     }
+    
+    var isoMode: CameraISOMode = .auto {
+        didSet {
+            if isoMode == .manual {
+                self.setExposureModeCustom(exposureDuration: shutterSpeedValue, iso: isoValue) { () -> (Void) in
+                }
+            } else {
+                self.setAutoExposure()
+            }
+        }
+    }
+    var shutterMode: CameraShutterMode = .auto {
+        didSet {
+            if shutterMode == .manual {
+                self.setExposureModeCustom(exposureDuration: shutterSpeedValue, iso: isoValue) { () -> (Void) in
+                }
+            } else {
+                self.setAutoExposure()
+            }
+        }
+    }
+    
+    var isoValue: Float! {
+        didSet {
+            if isoMode == .manual {
+                self.setExposureModeCustom(exposureDuration: shutterSpeedValue, iso: isoValue) { () -> (Void) in
+                }
+            }
+        }
+    }
+    
+    var shutterSpeedValue: CMTime! {
+        didSet {
+            if shutterMode == .manual {
+                self.setExposureModeCustom(exposureDuration: shutterSpeedValue, iso: isoValue) { () -> (Void) in
+                }
+            }
+        }
+    }
+    
     
     override init() {
         super.init()
@@ -81,9 +131,11 @@ class ManualCamera: Camera {
     
     func reset() {
         settingMode = .none
-        focusMode = .autoFocus
+        focusMode = .auto
         flashMode = .off
-        exposureMode = .autoExposure
+        exposureMode = .auto
+        isoMode = .auto
+        shutterMode = .auto
         selectedWhiteBalanceIndex = 0
 
         setContinuousAutoWhiteBalance()
@@ -123,6 +175,14 @@ class ManualCamera: Camera {
         return -1
     }
     
+    func indexOfISO() -> Int {
+        return isoIndex(isoValue)
+    }
+    
+    func indexOfShutterSpeed() -> Int {
+        return exposureDurationIndex(shutterSpeedValue)
+    }
+    
     override func exposureDuration() -> CMTime {
         guard let cameraInput = input else { return CameraConstants.ExposureDurationValues[0] }
         let camera = cameraInput.device
@@ -156,5 +216,12 @@ class ManualCamera: Camera {
         return CameraConstants.IsoValues[0]
     }
     
+    func selectISO(_ index: Int) {
+        isoValue = CameraConstants.IsoValues[index]
+    }
+    
+    func selectShutterSpeed(_ index: Int) {
+        shutterSpeedValue = CameraConstants.ExposureDurationValues[index]
+    }
 
 }

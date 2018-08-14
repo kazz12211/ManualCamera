@@ -169,7 +169,7 @@ class ViewController: UIViewController {
     
     @IBAction func doFocus(_ gestureRecognizer: UITapGestureRecognizer) {
         hideSettingView()
-        if camera.focusMode == .autoFocus {
+        if camera.focusMode == .auto {
             let touchPoint = gestureRecognizer.location(ofTouch: 0, in: previewView)
             if touchPoint.x < 30 || touchPoint.x > (previewView.frame.size.width - 30) || touchPoint.y < 30 || touchPoint.y > (previewView.frame.size.height - 30) {
                 return
@@ -286,6 +286,16 @@ class ViewController: UIViewController {
         exposureStepper.value = Double(camera.exposureTargetBias())
         exposureStepper.stepValue = 0.5
         
+        isoStepper.minimumValue = 0
+        isoStepper.maximumValue = Double(CameraConstants.IsoValues.count - 1)
+        isoStepper.value = 0
+        isoStepper.stepValue = 1
+        
+        shutterSpeedStepper.minimumValue = 0
+        shutterSpeedStepper.maximumValue = Double(CameraConstants.ExposureDurationValues.count - 1)
+        shutterSpeedStepper.value = 0
+        shutterSpeedStepper.stepValue = 1
+        
         layoutSubviews()
         
         if previewLayer != nil {
@@ -380,16 +390,16 @@ class ViewController: UIViewController {
     @IBAction func showFocusControl(_ sender: UIButton) {
         focusControl.isHidden = !focusControl.isHidden
         focusSlider.isHidden = focusControl.isHidden
-        focusSlider.isEnabled = camera.focusMode == .manualFocus
+        focusSlider.isEnabled = camera.focusMode == .manual
         focusSlider.value = camera.lensPosition()
    }
     
     @IBAction func focusModeChanged(_ sender: UISegmentedControl) {
-        camera.focusMode = FocusMode(rawValue: focusControl.selectedSegmentIndex)!
-        focusSlider.isEnabled = camera.focusMode == .manualFocus
+        camera.focusMode = CameraFocusMode(rawValue: focusControl.selectedSegmentIndex)!
+        focusSlider.isEnabled = camera.focusMode == .manual
         focusSlider.value = camera.lensPosition()
         focusButton.setImage(UIImage(named: focusButtonImageNames[camera.focusMode.rawValue]), for: .normal)
-        if camera.focusMode == .autoFocus {
+        if camera.focusMode == .auto {
             doAutoFocus(at: CGPoint(x: 0.5, y: 0.5))
         }
     }
@@ -400,7 +410,7 @@ class ViewController: UIViewController {
         }
     }
     
-    private func showSettingView(mode: SettingMode) {
+    private func showSettingView(mode: CameraSettingMode) {
         switch mode {
         case .exposure:
             layoutExposureControl()
@@ -435,8 +445,9 @@ class ViewController: UIViewController {
             hideSettingView()
         } else {
             showSettingView(mode: .exposure)
-            exposureSwitch.isOn = camera.exposureMode == .manualExposure
+            exposureSwitch.isOn = camera.exposureMode == .manual
             exposureStepper.isEnabled = exposureSwitch.isOn
+            exposureStepper.value = Double(camera.exposureTargetBias)
             exposureValueLabel.text = "".appendingFormat("%.1f", camera.exposureTargetBias)
         }
     }
@@ -446,6 +457,10 @@ class ViewController: UIViewController {
             hideSettingView()
         } else {
             showSettingView(mode: .iso)
+            isoSwitch.isOn = camera.isoMode == .manual
+            isoStepper.isEnabled = isoSwitch.isOn
+            isoStepper.value = Double(camera.indexOfISO())
+            isoValueLabel.text = "".appendingFormat("%.0f", camera.iso())
         }
     }
     
@@ -454,6 +469,10 @@ class ViewController: UIViewController {
             hideSettingView()
         } else {
             showSettingView(mode: .shutterSpeed)
+            shutterSpeedSwitch.isOn = camera.shutterMode == .manual
+            shutterSpeedStepper.isEnabled = shutterSpeedSwitch.isOn
+            shutterSpeedStepper.value = Double(camera.indexOfShutterSpeed())
+            shutterSpeedValueLabel.text = camera.exposureDurationLabel()
         }
     }
     
@@ -472,11 +491,45 @@ class ViewController: UIViewController {
     
     @IBAction func toggleExposure(_ sender: UISwitch) {
         if sender.isOn {
-            camera.exposureMode = .manualExposure
+            camera.exposureMode = .manual
        } else {
-            camera.exposureMode = .autoExposure
+            camera.exposureMode = .auto
         }
         exposureStepper.isEnabled = sender.isOn
+    }
+    
+    @IBAction func changeISO(_ sender: UIStepper) {
+        let index = Int(sender.value)
+        camera.selectISO(index)
+        isoValueLabel.text = "".appendingFormat("%.0f", camera.iso())
+        isoLabel.text = "".appendingFormat("%.0f", camera.iso())
+    }
+    
+    @IBAction func toggleISO(_ sender: UISwitch) {
+        if sender.isOn {
+            camera.isoMode = .manual
+        } else {
+            camera.isoMode = .auto
+        }
+        isoStepper.isEnabled = sender.isOn
+        isoValueLabel.text = "".appendingFormat("%.0f", camera.iso())
+    }
+    
+    @IBAction func changeShutterSpeed(_ sender: UIStepper) {
+        let index = Int(sender.value)
+        camera.selectShutterSpeed(index)
+        shutterSpeedValueLabel.text = camera.exposureDurationLabel()
+        shutterSpeedLabel.text = camera.exposureDurationLabel()
+    }
+    
+    @IBAction func toggleShutterSpeed(_ sender: UISwitch) {
+        if sender.isOn {
+            camera.shutterMode = .manual
+        } else {
+            camera.shutterMode = .auto
+        }
+        shutterSpeedStepper.isEnabled = sender.isOn
+        shutterSpeedValueLabel.text = camera.exposureDurationLabel()
     }
 }
 
@@ -489,9 +542,19 @@ extension ViewController: CameraDelegate {
     }
     
     func cameraDidFinishExposing(_ camera: Camera, device: AVCaptureDevice) {
-        shutterSpeedLabel.text = (camera as! ManualCamera).exposureDurationLabel()
-        isoLabel.text = "".appendingFormat("%.0f", camera.iso())
+        let c = camera as! ManualCamera
+        if c.shutterMode == .auto {
+            shutterSpeedLabel.text = c.exposureDurationLabel()
+            shutterSpeedValueLabel.text = c.exposureDurationLabel()
+        }
+        if c.isoMode == .auto {
+            isoLabel.text = "".appendingFormat("%.0f", c.iso())
+            isoValueLabel.text = "".appendingFormat("%.0f", c.iso())
+        }
         exposureLabel.text = "".appendingFormat("%.1f", device.exposureTargetBias)
+        c.isoValue = c.iso()
+        c.shutterSpeedValue = c.exposureDuration()
+        
     }
     
     func cameraDidFinishWhiteBalancing(_ camera: Camera, device: AVCaptureDevice) {
