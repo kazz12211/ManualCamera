@@ -190,20 +190,6 @@
                                 </attributedString>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zG2-W1-ini">
-                                <rect key="frame" x="58" y="618" width="44" height="17"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <attributedString key="attributedText">
-                                    <fragment content="AWB">
-                                        <attributes>
-                                            <color key="NSColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <font key="NSFont" size="12" name="GillSans"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
-                                        </attributes>
-                                    </fragment>
-                                </attributedString>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ERV-Mg-eJP">
                                 <rect key="frame" x="64" y="599" width="32" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -247,7 +233,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Oc-4L-uTO">
-                                <rect key="frame" x="39" y="599" width="375" height="141"/>
+                                <rect key="frame" x="-107" y="599" width="375" height="141"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ws4-kd-vnY">
@@ -296,6 +282,9 @@
                                         <rect key="frame" x="13" y="33" width="94" height="29"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="tintColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <connections>
+                                            <action selector="changeWhiteBalance:" destination="BYZ-38-t0r" eventType="valueChanged" id="tze-DS-5Fi"/>
+                                        </connections>
                                     </stepper>
                                     <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="8" translatesAutoresizingMaskIntoConstraints="NO" id="9mR-vp-mHF">
                                         <rect key="frame" x="13" y="96" width="94" height="29"/>
@@ -355,6 +344,20 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zG2-W1-ini">
+                                <rect key="frame" x="291" y="600" width="44" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="AWB">
+                                        <attributes>
+                                            <color key="NSColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <font key="NSFont" size="12" name="GillSans"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -363,8 +366,8 @@
                         <outlet property="counterButton" destination="q2H-KJ-xYa" id="h52-EU-MtT"/>
                         <outlet property="exposureButton" destination="CY6-Y5-lkL" id="SbF-Dm-Vuk"/>
                         <outlet property="exposureLabel" destination="a69-gF-4Za" id="Lkv-NQ-jur"/>
-                        <outlet property="exposureStepper" destination="9mR-vp-mHF" id="536-lE-4CF"/>
-                        <outlet property="exposureValueLabel" destination="rQG-Nd-u7R" id="LtM-MK-OmH"/>
+                        <outlet property="exposureStepper" destination="9mR-vp-mHF" id="LGe-AK-HCT"/>
+                        <outlet property="exposureValueLabel" destination="rQG-Nd-u7R" id="Qax-jD-Y9K"/>
                         <outlet property="flashButton" destination="gL8-av-SYs" id="OZl-Iv-bZ6"/>
                         <outlet property="flashControl" destination="4Fs-c0-MFW" id="Im8-UB-Jo2"/>
                         <outlet property="focusButton" destination="EjU-M5-xQR" id="RRf-Ls-hH8"/>
@@ -372,25 +375,25 @@
                         <outlet property="focusSlider" destination="sg6-lm-1x3" id="Yg7-Rj-gc5"/>
                         <outlet property="isoButton" destination="KNU-Cb-khF" id="9DH-8C-gve"/>
                         <outlet property="isoLabel" destination="ERV-Mg-eJP" id="sOT-BX-UZH"/>
-                        <outlet property="isoStepper" destination="FZT-mV-97c" id="2jK-Is-a24"/>
-                        <outlet property="isoSwitch" destination="jLk-tt-Ra3" id="438-pV-VVb"/>
-                        <outlet property="isoValueLabel" destination="mBl-vl-RgL" id="Cfw-Qh-Dik"/>
+                        <outlet property="isoStepper" destination="FZT-mV-97c" id="1D8-fP-KPi"/>
+                        <outlet property="isoSwitch" destination="jLk-tt-Ra3" id="1Xb-al-JzI"/>
+                        <outlet property="isoValueLabel" destination="mBl-vl-RgL" id="Fxq-9g-nSk"/>
                         <outlet property="lensPositionLabel" destination="Lid-2R-Vbo" id="0yz-yV-k8A"/>
                         <outlet property="previewView" destination="oyi-YS-had" id="SCJ-jk-huc"/>
-                        <outlet property="settingLabel" destination="Gyw-RF-YB7" id="lIG-u8-JfK"/>
+                        <outlet property="settingLabel" destination="Gyw-RF-YB7" id="YK4-Tj-Mhx"/>
                         <outlet property="settingView" destination="5Oc-4L-uTO" id="bJa-6j-xvM"/>
                         <outlet property="shutterSpeedButton" destination="KUb-E5-aLP" id="43d-gp-GNw"/>
                         <outlet property="shutterSpeedLabel" destination="ajA-VR-nIg" id="s6W-vW-fg1"/>
-                        <outlet property="shutterSpeedStepper" destination="d9F-qk-ODP" id="aPz-1t-Lxy"/>
-                        <outlet property="shutterSpeedSwitch" destination="9mD-BO-JuN" id="0D6-19-d7Z"/>
-                        <outlet property="shutterSpeedValueLabel" destination="CKT-VR-qk3" id="NdJ-5b-ckN"/>
+                        <outlet property="shutterSpeedStepper" destination="d9F-qk-ODP" id="Msz-f5-mwJ"/>
+                        <outlet property="shutterSpeedSwitch" destination="9mD-BO-JuN" id="4RT-na-nzb"/>
+                        <outlet property="shutterSpeedValueLabel" destination="CKT-VR-qk3" id="mfV-EA-AER"/>
                         <outlet property="takeButton" destination="cCW-rj-4K4" id="eZO-mz-pjO"/>
                         <outlet property="timerButton" destination="gJo-m4-TzK" id="yj4-oG-XHH"/>
                         <outlet property="timerControl" destination="WhZ-40-8HK" id="6Kw-FA-S6v"/>
                         <outlet property="whiteBalanceButton" destination="ot9-Qh-G0F" id="YsZ-6c-KUu"/>
                         <outlet property="whiteBalanceLabel" destination="zG2-W1-ini" id="a85-I1-3AV"/>
-                        <outlet property="whiteBalanceStepper" destination="NrG-Dg-X8X" id="7Eg-LF-k3q"/>
-                        <outlet property="whiteBalanceValueLabel" destination="ws4-kd-vnY" id="7ph-iZ-L49"/>
+                        <outlet property="whiteBalanceStepper" destination="NrG-Dg-X8X" id="OFG-Mm-MSj"/>
+                        <outlet property="whiteBalanceValueLabel" destination="ws4-kd-vnY" id="GmD-9E-8fj"/>
                         <outlet property="zoomLabel" destination="p54-qh-ZGT" id="psD-Ol-sov"/>
                     </connections>
                 </viewController>

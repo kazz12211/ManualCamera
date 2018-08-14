@@ -418,7 +418,7 @@ extension ViewController {
     }
 
     private func layoutWhiteBalanceLabel() {
-        var f = CGRect(x: 0, y: 0, width: 44, height: 17)
+        var f = CGRect(x: 0, y: 0, width: 48, height: 17)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
             f.origin.x = whiteBalanceButton.frame.origin.x + whiteBalanceButton.frame.width + 4
@@ -469,9 +469,9 @@ extension ViewController {
     func layoutWhiteBalanceControl() {
         hideSettingControls()
         
-        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 100, height: 17)
+        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 120, height: 17)
         settingLabel.frame = f
-        settingLabel.text = "White Balance"
+        settingLabel.text = "WHITE BALANCE"
 
         f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 17)
         f.origin.y = ViewController.CONTROL_GAP + 8 + settingLabel.frame.height
@@ -488,9 +488,9 @@ extension ViewController {
     func layoutExposureControl() {
         hideSettingControls()
         
-        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 100, height: 17)
+        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 120, height: 17)
         settingLabel.frame = f
-        settingLabel.text = "Exposure"
+        settingLabel.text = "EXPOSURE"
         
         f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 17)
         f.origin.y = ViewController.CONTROL_GAP + 8 + settingLabel.frame.height
@@ -507,7 +507,7 @@ extension ViewController {
     func layoutIsoControl() {
         hideSettingControls()
         
-        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 100, height: 17)
+        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 120, height: 17)
         settingLabel.frame = f
         settingLabel.text = "ISO"
         
@@ -532,9 +532,9 @@ extension ViewController {
     func layoutShutterSpeedControl() {
         hideSettingControls()
         
-        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 100, height: 17)
+        var f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 120, height: 17)
         settingLabel.frame = f
-        settingLabel.text = "Shutter Speed"
+        settingLabel.text = "SHUTTER SPEED"
         
         f = CGRect(x: ViewController.CONTROL_GAP, y: 0, width: 94, height: 17)
         f.origin.y = ViewController.CONTROL_GAP + 8 + settingLabel.frame.height

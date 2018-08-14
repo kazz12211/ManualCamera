@@ -11,8 +11,11 @@ import AVFoundation
 import Photos
 
 @objc protocol CameraDelegate: NSObjectProtocol {
-    @objc optional func cameraWillSave(_ camera: Camera, photo: AVCapturePhoto) -> Data?
-    @objc optional func cameraDidSave(_ camera: Camera, photo: AVCapturePhoto, savedImage: Data)
+    @objc optional func cameraWillSavePhoto(_ camera: Camera, photo: AVCapturePhoto) -> Data?
+    @objc optional func cameraDidSavePhoto(_ camera: Camera, photo: AVCapturePhoto, savedImage: Data)
+    @objc optional func cameraDidFinishFocusing(_ camera: Camera, device: AVCaptureDevice)
+    @objc optional func cameraDidFinishExposing(_ camera: Camera, device: AVCaptureDevice)
+    @objc optional func cameraDidFinishWhiteBalancing(_ camera: Camera, device: AVCaptureDevice)
 }
 
 class Camera : NSObject {
@@ -23,12 +26,10 @@ class Camera : NSObject {
     var maxExposureDuration: CMTime!
     var minExposureDuration: CMTime!
     var input: AVCaptureDeviceInput!
+    var camera: AVCaptureDevice!
     var output: AVCapturePhotoOutput!
     var active: Bool = false
     weak var _delegate: CameraDelegate!
-    
-    static let CameraDidFinishAutoFocus = Notification.Name("CameraDidFinishAutoFocus")
-    static let CameraDidFinishExposing = Notification.Name("CameraDidFinishExposing")
     
     override init() {
         super.init()
@@ -40,15 +41,18 @@ class Camera : NSObject {
         
         let discoverSession = AVCaptureDevice.DiscoverySession.init(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .back)
         let devices = discoverSession.devices
-        guard let camera = devices.first else { return }
+        guard let c = devices.first else { return }
         
+        camera = c
         camera.addObserver(self, forKeyPath: "adjustingFocus", options: [.new], context: nil)
         camera.addObserver(self, forKeyPath: "adjustingExposure", options: [.new], context: nil)
+        camera.addObserver(self, forKeyPath: "adjustingWhiteBalance", options: [.new], context: nil)
 
         maxISO = camera.activeFormat.maxISO
         minISO = camera.activeFormat.minISO
         maxExposureDuration = camera.activeFormat.maxExposureDuration
         minExposureDuration = camera.activeFormat.minExposureDuration
+
         do {
             self.input = try AVCaptureDeviceInput(device: camera)
             if self.captureSession.canAddInput(self.input) {
@@ -71,6 +75,7 @@ class Camera : NSObject {
 
     var focusing: Bool = false
     var expososing: Bool = false
+    var whiteBalancing: Bool = false
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
@@ -84,7 +89,9 @@ class Camera : NSObject {
                 focusing = true
             } else {
                 focusing = false
-                NotificationCenter.default.post(name: Camera.CameraDidFinishAutoFocus, object: self)
+                if _delegate != nil && _delegate.responds(to: #selector(CameraDelegate.cameraDidFinishFocusing(_:device:))) {
+                    _delegate.cameraDidFinishFocusing!(self, device: camera)
+                }
             }
         } else if key == "adjustingExposure" {
             let adjustingExposure = changes[.newKey]
@@ -92,7 +99,19 @@ class Camera : NSObject {
                 expososing = true
             } else {
                 expososing = false
-                NotificationCenter.default.post(name: Camera.CameraDidFinishExposing, object: self)
+                if _delegate != nil && _delegate.responds(to: #selector(CameraDelegate.cameraDidFinishExposing(_:device:))) {
+                    _delegate.cameraDidFinishExposing!(self, device: camera)
+                }
+            }
+        } else if key == "adjustWhiteBalance" {
+            let adjustingWhiteBalance = changes[.newKey]
+            if (adjustingWhiteBalance! as! Bool) {
+                whiteBalancing = true
+            } else {
+                whiteBalancing = false
+                if _delegate != nil && _delegate.responds(to: #selector(CameraDelegate.cameraDidFinishWhiteBalancing(_:device:))) {
+                    _delegate.cameraDidFinishWhiteBalancing!(self, device: camera)
+                }
             }
         }
     }
@@ -110,8 +129,6 @@ class Camera : NSObject {
     }
     
     func enableLowLightBoost(_ flag: Bool) {
-        guard let cameraInput = input else { return }
-        let camera = cameraInput.device
         do {
             try camera.lockForConfiguration()
             if camera.isLowLightBoostSupported {
@@ -124,8 +141,6 @@ class Camera : NSObject {
     }
     
     func autoFocus(at point: CGPoint) {
-        guard let cameraInput = input else { return }
-        let camera = cameraInput.device
         do {
             try camera.lockForConfiguration()
             if camera.isFocusModeSupported(.autoFocus) && camera.isFocusPointOfInterestSupported {
@@ -140,21 +155,19 @@ class Camera : NSObject {
     }
     
     func manualFocus(lensPosition: Float, completionHandler handler: @escaping() -> (Swift.Void)) {
-        guard let cameraInput = input else { return }
-        let camera = cameraInput.device
-        do {
-            if camera.isFocusModeSupported(.locked) {
+        if camera.isFocusModeSupported(.locked) {
+            do {
                 focusing = false
                 try camera.lockForConfiguration()
                 camera.setFocusModeLocked(lensPosition: lensPosition) { (time) in
-                    camera.unlockForConfiguration()
+                    self.camera.unlockForConfiguration()
                     handler()
                 }
-            } else {
+            } catch {
+                print(error)
                 handler()
             }
-        } catch {
-            print(error)
+        } else {
             handler()
         }
     }
@@ -168,20 +181,18 @@ class Camera : NSObject {
     }
     
     func setWhiteBalance(gains: AVCaptureDevice.WhiteBalanceGains, completionHandler handler: @escaping() -> (Swift.Void)) {
-        guard let cameraInput = input else { return }
-        let camera = cameraInput.device
-        do {
-            if camera.isWhiteBalanceModeSupported(.locked) {
+        if camera.isWhiteBalanceModeSupported(.locked) {
+            do {
                 try camera.lockForConfiguration()
                 camera.setWhiteBalanceModeLocked(with: gains) { (time) in
-                    camera.unlockForConfiguration()
+                    self.camera.unlockForConfiguration()
                     handler()
                 }
-            } else {
+            } catch {
+                print(error)
                 handler()
             }
-        } catch {
-            print(error)
+        } else {
             handler()
         }
     }
@@ -195,20 +206,18 @@ class Camera : NSObject {
     }
     
     func setExposureModeCustom(exposureDuration: CMTime, iso: Float, complationHandler handler: @escaping() -> (Swift.Void)) {
-        guard let cameraInput = input else { return }
-        let camera = cameraInput.device
-        do {
-            if camera.isFocusModeSupported(.locked) {
+        if camera.isFocusModeSupported(.locked) {
+            do {
                 try camera.lockForConfiguration()
                 camera.setExposureModeCustom(duration: exposureDuration, iso: iso) { (time) in
-                    camera.unlockForConfiguration()
+                    self.camera.unlockForConfiguration()
                     handler()
                 }
-            } else {
+            } catch {
+                print(error)
                 handler()
             }
-        } catch {
-            print(error)
+        } else {
             handler()
         }
     }
@@ -232,8 +241,6 @@ class Camera : NSObject {
     }
     
     func _setWhiteBalanceMode(_ mode: AVCaptureDevice.WhiteBalanceMode) {
-        guard let cameraInput = input else { return }
-        let camera = cameraInput.device
         do {
             try camera.lockForConfiguration()
             if camera.isWhiteBalanceModeSupported(mode) {
@@ -246,8 +253,6 @@ class Camera : NSObject {
     }
     
     private func _setExposureMode(_ mode: AVCaptureDevice.ExposureMode) {
-        guard let cameraInput = input else { return }
-        let camera = cameraInput.device
         do {
             try camera.lockForConfiguration()
             if camera.isExposureModeSupported(mode) {
@@ -265,8 +270,6 @@ class Camera : NSObject {
     
     var oldZoomScale: CGFloat = 1.0
     func zoom(_ zoomScale: CGFloat, end: Bool, complationHandler handler: @escaping(_ : CGFloat) -> (Swift.Void)) {
-        guard let cameraInput = input else { return }
-        let camera = cameraInput.device
         do {
             try camera.lockForConfiguration()
             let maxZoomScale: CGFloat = 6.0
@@ -298,85 +301,26 @@ class Camera : NSObject {
     }
     
     func zoomFactor() -> CGFloat {
-        guard let cameraInput = input else { return oldZoomScale }
-        let camera = cameraInput.device
         return camera.videoZoomFactor
     }
-    
-    private func exposureDurationIndex(_ duration: CMTime) -> Int {
-        for i in 0...CameraConstants.ExposureDurationValues.count-2 {
-            if CMTimeCompare(duration, CameraConstants.ExposureDurationValues[i]) == 0 {
-                return i
-            } else if CMTimeCompare(duration, CameraConstants.ExposureDurationValues[i+1]) == 0 {
-                return i+1
-            } else if CMTimeCompare(duration, CameraConstants.ExposureDurationValues[i]) == 1 && CMTimeCompare(duration, CameraConstants.ExposureDurationValues[i+1]) == -1 {
-                return i
-            }
-        }
-        return -1
-    }
-    
-    private func isoIndex(_ iso: Float) -> Int {
-        for i in 0...CameraConstants.IsoValues.count-2 {
-            if iso == CameraConstants.IsoValues[i] {
-                return i
-            } else if iso == CameraConstants.IsoValues[i+1] {
-                return i+1
-            } else if iso > CameraConstants.IsoValues[i] && iso < CameraConstants.IsoValues[i+1] {
-                return i
-            }
-        }
-        return -1
-    }
-    
+        
     func exposureDuration() -> CMTime {
-        guard let cameraInput = input else { return CameraConstants.ExposureDurationValues[0] }
-        let camera = cameraInput.device
-        let duration = camera.exposureDuration
-        let index = exposureDurationIndex(duration)
-        if index >= 0 {
-            return CameraConstants.ExposureDurationValues[index]
-        }
-        return CameraConstants.ExposureDurationValues[0]
-    }
-    
-    func exposureDurationLabel() -> String {
-        guard let cameraInput = input else { return CameraConstants.ExposureDurationLabels[0] }
-        let camera = cameraInput.device
-        let duration = camera.exposureDuration
-        let index = exposureDurationIndex(duration)
-        if index >= 0 {
-            return CameraConstants.ExposureDurationLabels[index]
-        }
-        return CameraConstants.ExposureDurationLabels[0]
+        return camera.exposureDuration
     }
     
     func iso() -> Float {
-        guard let cameraInput = input else { return CameraConstants.IsoValues[0] }
-        let camera = cameraInput.device
-        let iso = camera.iso
-        let index = isoIndex(iso)
-        if index >= 0 {
-            return CameraConstants.IsoValues[index]
-        }
-        return CameraConstants.IsoValues[0]
+        return camera.iso
     }
     
     func exposureTargetOffset() -> Float {
-        guard let cameraInput = input else { return 0 }
-        let camera = cameraInput.device
         return camera.exposureTargetOffset
     }
     
     func exposureTargetBias() -> Float {
-        guard let cameraInput = input else { return 0 }
-        let camera = cameraInput.device
         return camera.exposureTargetBias
     }
     
     func whiteBalanceGains() -> AVCaptureDevice.WhiteBalanceGains? {
-        guard let cameraInput = input else { return nil }
-        let camera = cameraInput.device
         return camera.deviceWhiteBalanceGains
     }
 }
@@ -386,8 +330,8 @@ extension Camera: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard let imageData = photo.fileDataRepresentation() else { return }
         var image: Data!
-        if _delegate != nil && _delegate.responds(to: #selector(CameraDelegate.cameraWillSave(_:photo:))) {
-            image = _delegate.cameraWillSave!(self, photo: photo)
+        if _delegate != nil && _delegate.responds(to: #selector(CameraDelegate.cameraWillSavePhoto(_:photo:))) {
+            image = _delegate.cameraWillSavePhoto!(self, photo: photo)
         } else {
             image = imageData
         }
@@ -399,8 +343,8 @@ extension Camera: AVCapturePhotoCaptureDelegate {
         }) { (success, failure) in
             if success {
                 print("Photo saved")
-                if self._delegate != nil && self._delegate.responds(to: #selector(CameraDelegate.cameraDidSave(_:photo:savedImage:))) {
-                    self._delegate.cameraDidSave!(self, photo: photo, savedImage: image)
+                if self._delegate != nil && self._delegate.responds(to: #selector(CameraDelegate.cameraDidSavePhoto(_:photo:savedImage:))) {
+                    self._delegate.cameraDidSavePhoto!(self, photo: photo, savedImage: image)
                 }
             } else {
                 print("Could not save photo: \(String(describing: failure))")

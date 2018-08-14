@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 
 enum Kelvin: Float {
-    case candle         = 1800  // 1000-2000K
+    case candle         = 2000  // 1000-2000K  raises exception because out of range
     case tungsten       = 3200  // 2500-3500K
     case sunrise        = 3500  // 3000-4000K
     case flourescent    = 4500  // 4000-5000K
@@ -36,6 +36,6 @@ struct CameraConstants {
     static let K_Cloudy = AVCaptureDevice.WhiteBalanceTemperatureAndTintValues(temperature: Kelvin.cloudy.rawValue, tint: -5)
     static let K_Shade = AVCaptureDevice.WhiteBalanceTemperatureAndTintValues(temperature: Kelvin.shade.rawValue, tint: -5)
 
-    static let WhiteBalanceLabels: [String] = ["AWB", "Candle", "Tungsten", "Flourescent", "Sunrise", "Flash", "Daylight", "Cloudy", "Shade"]
+    static let WhiteBalanceLabels: [String] = ["AWB", "TUNGSTEN", "FLOURESCENT", "SUNSET", "FLASH", "SUNNY", "CLOUDY", "SHADE"]
     
 }

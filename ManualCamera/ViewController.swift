@@ -109,6 +109,7 @@ class ViewController: UIViewController {
             }
         } else {
             self.camera = ManualCamera()
+            self.camera.setDelegate(self)
             selfTimer = SelfTimer()
             selfTimer.initWithDelegate(self)
             self.setupSubviews()
@@ -135,7 +136,6 @@ class ViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if camera != nil { camera.start() }
-        NotificationCenter.default.addObserver(self, selector: #selector(exposingFinished(_:)), name: Camera.CameraDidFinishExposing, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -157,8 +157,7 @@ class ViewController: UIViewController {
     
     private func shoot() {
         let orientation = previewLayer.connection?.videoOrientation
-        let fMode = flashMode()
-        camera.takePhoto(flashMode: fMode, orientation: orientation!)
+        camera.takePhoto(orientation: orientation!)
     }
     
     @IBAction func cancelShot(_ sender: UIButton) {
@@ -168,6 +167,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func doFocus(_ gestureRecognizer: UITapGestureRecognizer) {
+        hideSettingView()
         if camera.focusMode == .autoFocus {
             let touchPoint = gestureRecognizer.location(ofTouch: 0, in: previewView)
             if touchPoint.x < 30 || touchPoint.x > (previewView.frame.size.width - 30) || touchPoint.y < 30 || touchPoint.y > (previewView.frame.size.height - 30) {
@@ -187,25 +187,9 @@ class ViewController: UIViewController {
     }
     
     private func doAutoFocus(at point: CGPoint) {
-        NotificationCenter.default.addObserver(self, selector: #selector(autoFocusFinished(_:)), name: Camera.CameraDidFinishAutoFocus, object: nil)
         camera.autoFocus(at: point)
     }
-    
-    @objc private func autoFocusFinished(_ notif: Notification) {
-        NotificationCenter.default.removeObserver(self, name: Camera.CameraDidFinishAutoFocus, object: nil)
-        hideFocus()
-        focusSlider.value = camera.lensPosition()
-        lensPositionLabel.text = "".appendingFormat("%.2f", camera.lensPosition())
-    }
-    
-    @objc private func exposingFinished(_ notif: Notification) {
-        shutterSpeedLabel.text = camera.exposureDurationLabel()
-        isoLabel.text = "".appendingFormat("%.0f", camera.iso())
-        let exposureTargetBias = camera.exposureTargetOffset()
-        let sign = exposureTargetBias > 0 ? "+" : exposureTargetBias < 0 ? "-" : ""
-        exposureLabel.text = "".appendingFormat("%@%.1f", sign, fabs(exposureTargetBias))
-    }
-    
+            
     private func flashMode() -> AVCaptureDevice.FlashMode {
         switch flashControl.selectedSegmentIndex {
         case 0:
@@ -291,6 +275,11 @@ class ViewController: UIViewController {
         settingView.layer.opacity = 1
         settingView.isHidden = true
         
+        whiteBalanceStepper.minimumValue = 0
+        whiteBalanceStepper.maximumValue = Double(CameraConstants.WhiteBalanceLabels.count - 1)
+        whiteBalanceStepper.value = 0
+        whiteBalanceStepper.stepValue = 1
+        
         layoutSubviews()
         
         if previewLayer != nil {
@@ -301,6 +290,7 @@ class ViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(doFocus(_:)))
         tapGesture.delegate = self
         previewView.addGestureRecognizer(tapGesture)
+        
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(doZoom(_:)))
         pinchGesture.delegate = self
         previewView.addGestureRecognizer(pinchGesture)
@@ -371,6 +361,7 @@ class ViewController: UIViewController {
     
     @IBAction func flashChanged(_ sender: UISegmentedControl) {
         flashControl.isHidden = true
+        camera.flashMode = flashMode()
         flashButton.setImage(UIImage(named: flashButtonImageNames[flashControl.selectedSegmentIndex]), for: .normal)
     }
     
@@ -397,66 +388,89 @@ class ViewController: UIViewController {
         }
     }
     
+    private func showSettingView(mode: SettingMode) {
+        switch mode {
+        case .exposure:
+            layoutExposureControl()
+        case .iso:
+            layoutIsoControl()
+        case .shutterSpeed:
+            layoutShutterSpeedControl()
+        case .whiteBalance:
+            layoutWhiteBalanceControl()
+        default:
+            break
+        }
+        camera.settingMode = mode
+        settingView.isHidden = false
+    }
+    
+    private func hideSettingView() {
+        camera.settingMode = .none
+        settingView.isHidden = true
+    }
+    
     @IBAction func showWhiteBalanceControl(_ sender: UIButton) {
-        layoutWhiteBalanceControl()
-        if settingView.isHidden {
-            settingView.isHidden = false
-            camera.settingMode = .whiteBalance
+        if camera.settingMode == .whiteBalance {
+            hideSettingView()
         } else {
-            if camera.settingMode == .whiteBalance {
-                settingView.isHidden = true
-                camera.settingMode = .none
-            } else {
-                camera.settingMode = .whiteBalance
-            }
+            showSettingView(mode: .whiteBalance)
         }
     }
     
     @IBAction func showExposureControl(_ sender: UIButton) {
-        layoutExposureControl()
-        if settingView.isHidden {
-            settingView.isHidden = false
-            camera.settingMode = .exposure
+        if camera.settingMode == .exposure {
+            hideSettingView()
         } else {
-            if camera.settingMode == .exposure {
-                settingView.isHidden = true
-                camera.settingMode = .none
-            } else {
-                camera.settingMode = .exposure
-            }
+            showSettingView(mode: .exposure)
         }
     }
     
     @IBAction func showIsoControl(_ sender: UIButton) {
-        layoutIsoControl()
-        if settingView.isHidden {
-            settingView.isHidden = false
-            camera.settingMode = .iso
+        if camera.settingMode == .iso {
+            hideSettingView()
         } else {
-            if camera.settingMode == .iso {
-                settingView.isHidden = true
-                camera.settingMode = .none
-            } else {
-                camera.settingMode = .iso
-            }
+            showSettingView(mode: .iso)
         }
     }
     
     @IBAction func showShutterSpeedControl(_ sender: UIButton) {
-        layoutShutterSpeedControl()
-        if settingView.isHidden {
-            settingView.isHidden = false
-            camera.settingMode = .shutterSpeed
+        if camera.settingMode == .shutterSpeed {
+            hideSettingView()
         } else {
-            if camera.settingMode == .shutterSpeed {
-                settingView.isHidden = true
-                camera.settingMode = .none
-            } else {
-                camera.settingMode = .shutterSpeed
-            }
+            showSettingView(mode: .shutterSpeed)
         }
     }
     
+    @IBAction func changeWhiteBalance(_ sender: UIStepper) {
+        let index = Int(sender.value)
+        whiteBalanceValueLabel.text = CameraConstants.WhiteBalanceLabels[index]
+        whiteBalanceLabel.text = CameraConstants.WhiteBalanceLabels[index]
+        camera.selectWhiteBalance(index: index)
+    }
+}
+
+extension ViewController: CameraDelegate {
+
+    func cameraDidFinishFocusing(_ camera: Camera, device: AVCaptureDevice) {
+        hideFocus()
+        focusSlider.value = device.lensPosition
+        lensPositionLabel.text = "".appendingFormat("%.2f", device.lensPosition)
+    }
+    
+    func cameraDidFinishExposing(_ camera: Camera, device: AVCaptureDevice) {
+        shutterSpeedLabel.text = (camera as! ManualCamera).exposureDurationLabel()
+        isoLabel.text = "".appendingFormat("%.0f", camera.iso())
+        let exposureTargetBias = device.exposureTargetBias
+        let sign = exposureTargetBias > 0 ? "+" : exposureTargetBias < 0 ? "-" : ""
+        exposureLabel.text = "".appendingFormat("%@%.1f", sign, fabs(exposureTargetBias))
+    }
+    
+    func cameraDidFinishWhiteBalancing(_ camera: Camera, device: AVCaptureDevice) {
+        let wb = device.deviceWhiteBalanceGains
+        print(wb)
+        
+    }
 }
 
 extension ViewController: SelfTimerDelegate {
