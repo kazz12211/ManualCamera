@@ -25,6 +25,7 @@
 		F846D4CC21241C9C004E130C /* ViewController+CameraDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F846D4CB21241C9C004E130C /* ViewController+CameraDelegate.swift */; };
 		F846D4CE21241CE7004E130C /* ViewController+SelfTimerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F846D4CD21241CE7004E130C /* ViewController+SelfTimerDelegate.swift */; };
 		F846D4D021241DB0004E130C /* ViewController+TimelapseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F846D4CF21241DB0004E130C /* ViewController+TimelapseDelegate.swift */; };
+		F846D4D221247046004E130C /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F846D4D121247046004E130C /* README.md */; };
 		F861E25A211F820D0053690C /* ViewController+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F861E259211F820D0053690C /* ViewController+Layout.swift */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		F846D4CB21241C9C004E130C /* ViewController+CameraDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+CameraDelegate.swift"; sourceTree = "<group>"; };
 		F846D4CD21241CE7004E130C /* ViewController+SelfTimerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+SelfTimerDelegate.swift"; sourceTree = "<group>"; };
 		F846D4CF21241DB0004E130C /* ViewController+TimelapseDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+TimelapseDelegate.swift"; sourceTree = "<group>"; };
+		F846D4D121247046004E130C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F861E259211F820D0053690C /* ViewController+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Layout.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -71,6 +73,7 @@
 		F838E861211E959D00C96674 = {
 			isa = PBXGroup;
 			children = (
+				F846D4D121247046004E130C /* README.md */,
 				F838E86C211E959D00C96674 /* ManualCamera */,
 				F838E86B211E959D00C96674 /* Products */,
 				F838E883211E9AA200C96674 /* Frameworks */,
@@ -179,6 +182,7 @@
 			files = (
 				F838E878211E959F00C96674 /* LaunchScreen.storyboard in Resources */,
 				F838E875211E959F00C96674 /* Assets.xcassets in Resources */,
+				F846D4D221247046004E130C /* README.md in Resources */,
 				F838E873211E959D00C96674 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
