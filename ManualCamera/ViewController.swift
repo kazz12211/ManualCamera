@@ -414,8 +414,8 @@ class ViewController: UIViewController {
         flashControl.isHidden = true
         timerControl.isHidden = true
         timelapseView.isHidden = !timelapseView.isHidden
-        timelapseCountLabel.text = "".appendingFormat("x%d", timelapseCountValues[Int(timelapseCountStepper.value)])
-        timelapseIntervalLabel.text = "".appendingFormat("%.0fs", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
+        timelapseCountLabel.text = "".appendingFormat("COUNT: %d", timelapseCountValues[Int(timelapseCountStepper.value)])
+        timelapseIntervalLabel.text = "".appendingFormat("INTERVAL: %.0fS", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
         timelapseIntervalStepper.isEnabled = timelapseCountStepper.value > 0
         timelapseIntervalStepper.tintColor = timelapseIntervalStepper.isEnabled ? UIColor.orange : UIColor.gray
         timelapseIntervalLabel.textColor = timelapseIntervalStepper.isEnabled ? UIColor.orange : UIColor.gray
@@ -586,14 +586,14 @@ class ViewController: UIViewController {
     }
     
     @IBAction func changeTimelapseCount(_ sender: UIStepper) {
-        timelapseCountLabel.text = "".appendingFormat("x%d", timelapseCountValues[Int(timelapseCountStepper.value)])
+        timelapseCountLabel.text = "".appendingFormat("COUNT: %d", timelapseCountValues[Int(timelapseCountStepper.value)])
         timelapseIntervalStepper.isEnabled = timelapseCountStepper.value > 0
         timelapseIntervalStepper.tintColor = timelapseIntervalStepper.isEnabled ? UIColor.orange : UIColor.gray
         timelapseIntervalLabel.textColor = timelapseIntervalStepper.isEnabled ? UIColor.orange : UIColor.gray
     }
     
     @IBAction func changeTimelapseInterval(_ sender: UIStepper) {
-        timelapseIntervalLabel.text = "".appendingFormat("%.0fs", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
+        timelapseIntervalLabel.text = "".appendingFormat("INTERVAL: %.0fS", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
    }
 }
 
