@@ -21,6 +21,10 @@
 		F838E88D211E9AC700C96674 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F838E88C211E9AC700C96674 /* CoreImage.framework */; };
 		F838E88F211E9C0E00C96674 /* CameraConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838E88E211E9C0E00C96674 /* CameraConstants.swift */; };
 		F838E891211E9E6700C96674 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838E890211E9E6700C96674 /* Camera.swift */; };
+		F846D4CA212416E2004E130C /* Timelapse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F846D4C9212416E2004E130C /* Timelapse.swift */; };
+		F846D4CC21241C9C004E130C /* ViewController+CameraDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F846D4CB21241C9C004E130C /* ViewController+CameraDelegate.swift */; };
+		F846D4CE21241CE7004E130C /* ViewController+SelfTimerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F846D4CD21241CE7004E130C /* ViewController+SelfTimerDelegate.swift */; };
+		F846D4D021241DB0004E130C /* ViewController+TimelapseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F846D4CF21241DB0004E130C /* ViewController+TimelapseDelegate.swift */; };
 		F861E25A211F820D0053690C /* ViewController+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F861E259211F820D0053690C /* ViewController+Layout.swift */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +45,10 @@
 		F838E88C211E9AC700C96674 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		F838E88E211E9C0E00C96674 /* CameraConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraConstants.swift; sourceTree = "<group>"; };
 		F838E890211E9E6700C96674 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		F846D4C9212416E2004E130C /* Timelapse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timelapse.swift; sourceTree = "<group>"; };
+		F846D4CB21241C9C004E130C /* ViewController+CameraDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+CameraDelegate.swift"; sourceTree = "<group>"; };
+		F846D4CD21241CE7004E130C /* ViewController+SelfTimerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+SelfTimerDelegate.swift"; sourceTree = "<group>"; };
+		F846D4CF21241DB0004E130C /* ViewController+TimelapseDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+TimelapseDelegate.swift"; sourceTree = "<group>"; };
 		F861E259211F820D0053690C /* ViewController+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Layout.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,6 +99,10 @@
 				F838E881211E9A8000C96674 /* ManualCamera.swift */,
 				F838E88E211E9C0E00C96674 /* CameraConstants.swift */,
 				F838E890211E9E6700C96674 /* Camera.swift */,
+				F846D4C9212416E2004E130C /* Timelapse.swift */,
+				F846D4CB21241C9C004E130C /* ViewController+CameraDelegate.swift */,
+				F846D4CD21241CE7004E130C /* ViewController+SelfTimerDelegate.swift */,
+				F846D4CF21241DB0004E130C /* ViewController+TimelapseDelegate.swift */,
 			);
 			path = ManualCamera;
 			sourceTree = "<group>";
@@ -179,11 +191,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				F838E88F211E9C0E00C96674 /* CameraConstants.swift in Sources */,
+				F846D4D021241DB0004E130C /* ViewController+TimelapseDelegate.swift in Sources */,
 				F838E882211E9A8000C96674 /* ManualCamera.swift in Sources */,
 				F838E891211E9E6700C96674 /* Camera.swift in Sources */,
+				F846D4CE21241CE7004E130C /* ViewController+SelfTimerDelegate.swift in Sources */,
 				F838E870211E959D00C96674 /* ViewController.swift in Sources */,
 				F861E25A211F820D0053690C /* ViewController+Layout.swift in Sources */,
 				F838E880211E95DC00C96674 /* SelfTimer.swift in Sources */,
+				F846D4CC21241C9C004E130C /* ViewController+CameraDelegate.swift in Sources */,
+				F846D4CA212416E2004E130C /* Timelapse.swift in Sources */,
 				F838E86E211E959D00C96674 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

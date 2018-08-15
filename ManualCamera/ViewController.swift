@@ -67,6 +67,7 @@ class ViewController: UIViewController {
     var focusLayer: CAShapeLayer!
     var authorized: Bool!
     var selfTimer: SelfTimer!
+    var timelapse: Timelapse!
 
     private let timelapseCountValues: [Int] = [0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 120, 150, 180, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000]
     private let timelapseIntervalValues: [TimeInterval] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600, 900, 1800, 3600]
@@ -122,6 +123,8 @@ class ViewController: UIViewController {
             self.camera.setDelegate(self)
             selfTimer = SelfTimer()
             selfTimer.initWithDelegate(self)
+            timelapse = Timelapse()
+            timelapse.initWithDelegate(self)
             self.setupSubviews()
             self.setupPreviewLayer()
             self.doAutoFocus(at: CGPoint(x: 0.5, y: 0.5))
@@ -154,7 +157,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func takePhoto(_ sender: UIButton) {
-        if camera == nil || selfTimer.active {
+        if camera == nil || selfTimer.active || timelapse.running {
             return
         }
         let seconds = selfTimerInterval()
@@ -165,9 +168,19 @@ class ViewController: UIViewController {
         }
     }
     
-    private func shoot() {
+    func doShoot() {
         let orientation = previewLayer.connection?.videoOrientation
         camera.takePhoto(orientation: orientation!)
+    }
+    
+    func shoot() {
+        let timelapseCount = timelapseCountValues[Int(timelapseCountStepper.value)]
+        let timelapseInterval = timelapseIntervalValues[Int(timelapseIntervalStepper.value)]
+        if timelapseCount > 0 {
+            timelapse.run(count: timelapseCount, interval: timelapseInterval)
+        } else {
+            doShoot()
+        }
     }
     
     @IBAction func cancelShot(_ sender: UIButton) {
@@ -595,55 +608,6 @@ class ViewController: UIViewController {
     @IBAction func changeTimelapseInterval(_ sender: UIStepper) {
         timelapseIntervalLabel.text = "".appendingFormat("INTERVAL: %.0fS", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
    }
-}
-
-extension ViewController: CameraDelegate {
-
-    func cameraDidFinishFocusing(_ camera: Camera, device: AVCaptureDevice) {
-        hideFocus()
-        focusSlider.value = device.lensPosition
-        lensPositionLabel.text = "".appendingFormat("%.2f", device.lensPosition)
-    }
-    
-    func cameraDidFinishExposing(_ camera: Camera, device: AVCaptureDevice) {
-        let c = camera as! ManualCamera
-        if c.shutterMode == .auto {
-            shutterSpeedLabel.text = c.exposureDurationLabel()
-            shutterSpeedValueLabel.text = c.exposureDurationLabel()
-        }
-        if c.isoMode == .auto {
-            isoLabel.text = "".appendingFormat("%.0f", c.iso())
-            isoValueLabel.text = "".appendingFormat("%.0f", c.iso())
-        }
-        exposureLabel.text = "".appendingFormat("%.1f", device.exposureTargetBias)
-        c.isoValue = c.iso()
-        c.shutterSpeedValue = c.exposureDuration()
-        
-    }
-    
-    func cameraDidFinishWhiteBalancing(_ camera: Camera, device: AVCaptureDevice) {
-        let wb = device.deviceWhiteBalanceGains
-        print(wb)
-    }
-    
-    func cameraDidFinishSettingExposureTargetBias(_ camera: Camera, device: AVCaptureDevice) {
-        exposureLabel.text = "".appendingFormat("%.1f", device.exposureTargetBias)
-        exposureValueLabel.text = "".appendingFormat("%.1f", device.exposureTargetBias)
-    }
-}
-
-extension ViewController: SelfTimerDelegate {
-    
-    func selfTimerCountdown(_ timer: SelfTimer, counter: Int) {
-        AudioServicesPlaySystemSound(SystemSoundID(1113))
-        counterButton.setAttributedTitle(NSAttributedString(string: "\(counter)", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 48), NSAttributedStringKey.foregroundColor: UIColor.white]), for: .normal)
-        counterButton.isHidden = false
-    }
-    
-    func selfTimerFinished(_ timer: SelfTimer) {
-        counterButton.isHidden = true
-        shoot()
-    }
 }
 
 extension ViewController: UIGestureRecognizerDelegate {

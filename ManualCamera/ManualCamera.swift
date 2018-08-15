@@ -113,7 +113,7 @@ class ManualCamera: Camera {
             }
         }
     }
-    
+        
     
     override init() {
         super.init()
