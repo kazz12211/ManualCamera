@@ -14,7 +14,7 @@ AVFoundationを使用した修作カメラアプリです。iPhone用のカメ�
 
 画面をピンチ操作することでズームの調整ができます。１倍から６倍の間で調整できるようにしています。
 
-![](./screenshots/pinch_zoom.png)
+![](./screenshots/pinch_zoom.PNG)
 
 ### タップフォーカス
 
