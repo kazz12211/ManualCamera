@@ -210,7 +210,7 @@ extension ViewController {
     }
     
     private func layoutTimelapseControl() {
-        var f = CGRect(x: 0, y: 0, width: 116, height: 126)
+        var f = CGRect(x: 0, y: 0, width: 126, height: 126)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
             f.origin.x = ViewController.TOP_BAR_HEIGHT + ViewController.CONTROL_GAP
@@ -226,13 +226,13 @@ extension ViewController {
         
         timelapseView.frame = f
         
-        f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 94, height: 17)
+        f = CGRect(x: ViewController.CONTROL_GAP, y: ViewController.CONTROL_GAP, width: 104, height: 17)
         timelapseCountLabel.frame = f
-        f = CGRect(x: ViewController.CONTROL_GAP, y: timelapseCountLabel.frame.height + timelapseCountLabel.frame.origin.y + 4, width: 94, height: 29)
+        f = CGRect(x: ViewController.CONTROL_GAP, y: timelapseCountLabel.frame.height + timelapseCountLabel.frame.origin.y + 4, width: 104, height: 29)
         timelapseCountStepper.frame = f
-        f = CGRect(x: ViewController.CONTROL_GAP, y: timelapseCountStepper.frame.height + timelapseCountStepper.frame.origin.y + 4, width: 94, height: 17)
+        f = CGRect(x: ViewController.CONTROL_GAP, y: timelapseCountStepper.frame.height + timelapseCountStepper.frame.origin.y + 4, width: 104, height: 17)
         timelapseIntervalLabel.frame = f
-        f = CGRect(x: ViewController.CONTROL_GAP, y: timelapseIntervalLabel.frame.height + timelapseIntervalLabel.frame.origin.y + 4, width: 94, height: 29)
+        f = CGRect(x: ViewController.CONTROL_GAP, y: timelapseIntervalLabel.frame.height + timelapseIntervalLabel.frame.origin.y + 4, width: 104, height: 29)
         timelapseIntervalStepper.frame = f
     }
     

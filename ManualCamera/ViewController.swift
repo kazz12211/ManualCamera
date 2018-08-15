@@ -70,7 +70,7 @@ class ViewController: UIViewController {
     var timelapse: Timelapse!
 
     private let timelapseCountValues: [Int] = [0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 120, 150, 180, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000]
-    private let timelapseIntervalValues: [TimeInterval] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600, 900, 1800, 3600]
+    private let timelapseIntervalValues: [TimeInterval] = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600, 900, 1800, 3600]
     
     private func authorizeCameraUsage(_ completionHandler: @escaping((_ success: Bool) -> Void)) {
         AVCaptureDevice.requestAccess(for: .video) { (granted) in
@@ -157,7 +157,11 @@ class ViewController: UIViewController {
     }
     
     @IBAction func takePhoto(_ sender: UIButton) {
-        if camera == nil || selfTimer.active || timelapse.running {
+        if camera == nil || selfTimer.active {
+            return
+        }
+        if timelapse.running {
+            timelapse.cancel()
             return
         }
         let seconds = selfTimerInterval()
@@ -404,6 +408,9 @@ class ViewController: UIViewController {
         flashControl.isHidden = true
         timelapseView.isHidden = true
         timerControl.isHidden = !timerControl.isHidden
+        timerButton.tintColor = timerControl.isHidden ? UIColor.orange : UIColor.gray
+        flashButton.tintColor = UIColor.orange
+        timelapseButton.tintColor = UIColor.orange
     }
     
     @IBAction func timerChanged(_ sender: UISegmentedControl) {
@@ -415,6 +422,9 @@ class ViewController: UIViewController {
         timerControl.isHidden = true
         timelapseView.isHidden = true
         flashControl.isHidden = !flashControl.isHidden
+        flashButton.tintColor = flashControl.isHidden ? UIColor.orange : UIColor.gray
+        timerButton.tintColor = UIColor.orange
+        timelapseButton.tintColor = UIColor.orange
    }
     
     @IBAction func flashChanged(_ sender: UISegmentedControl) {
@@ -428,10 +438,13 @@ class ViewController: UIViewController {
         timerControl.isHidden = true
         timelapseView.isHidden = !timelapseView.isHidden
         timelapseCountLabel.text = "".appendingFormat("COUNT: %d", timelapseCountValues[Int(timelapseCountStepper.value)])
-        timelapseIntervalLabel.text = "".appendingFormat("INTERVAL: %.0fS", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
+        timelapseIntervalLabel.text = "".appendingFormat("INTERVAL: %.1fS", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
         timelapseIntervalStepper.isEnabled = timelapseCountStepper.value > 0
         timelapseIntervalStepper.tintColor = timelapseIntervalStepper.isEnabled ? UIColor.orange : UIColor.gray
         timelapseIntervalLabel.textColor = timelapseIntervalStepper.isEnabled ? UIColor.orange : UIColor.gray
+        timelapseButton.tintColor = timelapseView.isHidden ? UIColor.orange : UIColor.gray
+        flashButton.tintColor = UIColor.orange
+        timerButton.tintColor = UIColor.orange
   }
     
     @IBAction func showFocusControl(_ sender: UIButton) {
@@ -442,6 +455,7 @@ class ViewController: UIViewController {
         focusSlider.maximumTrackTintColor = focusSlider.isEnabled ? UIColor.orange : UIColor.gray
         focusSlider.thumbTintColor = focusSlider.isEnabled ? UIColor.orange : UIColor.gray
         focusSlider.value = camera.lensPosition()
+        focusButton.tintColor = focusControl.isHidden ? UIColor.orange : UIColor.gray
    }
     
     @IBAction func focusModeChanged(_ sender: UISegmentedControl) {
@@ -464,25 +478,39 @@ class ViewController: UIViewController {
     }
     
     private func showSettingView(mode: CameraSettingMode) {
+        resetSettingButtons()
         switch mode {
         case .exposure:
             layoutExposureControl()
+            exposureButton.tintColor = UIColor.gray
         case .iso:
             layoutIsoControl()
+            isoButton.tintColor = UIColor.gray
         case .shutterSpeed:
             layoutShutterSpeedControl()
+            shutterSpeedButton.tintColor = UIColor.gray
         case .whiteBalance:
             layoutWhiteBalanceControl()
+            whiteBalanceButton.tintColor = UIColor.gray
         default:
             break
         }
         camera.settingMode = mode
         settingView.isHidden = false
+        
     }
     
+    private func resetSettingButtons() {
+        exposureButton.tintColor = UIColor.orange
+        isoButton.tintColor = UIColor.orange
+        shutterSpeedButton.tintColor = UIColor.orange
+        whiteBalanceButton.tintColor = UIColor.orange
+    }
+
     private func hideSettingView() {
         camera.settingMode = .none
         settingView.isHidden = true
+        resetSettingButtons()
     }
     
     @IBAction func showWhiteBalanceControl(_ sender: UIButton) {
@@ -606,7 +634,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func changeTimelapseInterval(_ sender: UIStepper) {
-        timelapseIntervalLabel.text = "".appendingFormat("INTERVAL: %.0fS", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
+        timelapseIntervalLabel.text = "".appendingFormat("INTERVAL: %.1fS", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
    }
 }
 
