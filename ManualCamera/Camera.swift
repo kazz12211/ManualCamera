@@ -17,7 +17,8 @@ import Photos
     @objc optional func cameraDidFinishExposing(_ camera: Camera, device: AVCaptureDevice)
     @objc optional func cameraDidFinishWhiteBalancing(_ camera: Camera, device: AVCaptureDevice)
     @objc optional func cameraDidFinishSettingExposureTargetBias(_ camera: Camera, device: AVCaptureDevice)
-    @objc optional func cameraShouldSavePhoto(_ camera: Camera, photo: AVCapturePhoto, image: Data) -> Bool
+    @objc optional func cameraShouldSavePhoto(_ camera: Camera, photo: AVCapturePhoto) -> Bool
+    @objc optional func cameraDelegatesToSavePhoto(_camera: Camera, photo: AVCapturePhoto, image: Data)
 }
 
 class Camera : NSObject {
@@ -402,8 +403,8 @@ extension Camera: AVCapturePhotoCaptureDelegate {
         
         var shouldSave = true
         
-        if _delegate != nil && _delegate.responds(to: #selector(CameraDelegate.cameraShouldSavePhoto(_:photo:image:))) {
-            shouldSave = _delegate.cameraShouldSavePhoto!(self, photo: photo, image: image)
+        if _delegate != nil && _delegate.responds(to: #selector(CameraDelegate.cameraShouldSavePhoto(_:photo:))) {
+            shouldSave = _delegate.cameraShouldSavePhoto!(self, photo: photo)
         }
         
         if shouldSave {
@@ -419,6 +420,10 @@ extension Camera: AVCapturePhotoCaptureDelegate {
                 } else {
                     print("Could not save photo: \(String(describing: failure))")
                 }
+            }
+        } else {
+            if _delegate != nil && _delegate.responds(to: #selector(CameraDelegate.cameraDelegatesToSavePhoto(_camera:photo:image:))) {
+                _delegate.cameraDelegatesToSavePhoto!(_camera: self, photo: photo, image: image)
             }
         }
     }
