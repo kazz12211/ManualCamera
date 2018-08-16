@@ -353,6 +353,38 @@ class Camera : NSObject {
     func whiteBalanceGains() -> AVCaptureDevice.WhiteBalanceGains? {
         return camera.deviceWhiteBalanceGains
     }
+    
+    func hasTorch() -> Bool {
+        return camera.hasTorch && camera.isTorchAvailable
+    }
+    
+    func isTorchOn() -> Bool {
+        return camera.isTorchActive
+    }
+    
+    func torchOn() {
+        toggleTorch(true)
+    }
+    
+    func torchOff() {
+        toggleTorch(false)
+    }
+    
+    private func toggleTorch(_ flag: Bool) {
+        if hasTorch() {
+            do {
+                try camera.lockForConfiguration()
+                if flag {
+                    camera.torchMode = .on
+                } else {
+                    camera.torchMode = .off
+                }
+                camera.unlockForConfiguration()
+            } catch {
+                print(error)
+            }
+        }
+    }
 }
 
 extension Camera: AVCapturePhotoCaptureDelegate {

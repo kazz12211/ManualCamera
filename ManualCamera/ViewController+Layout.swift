@@ -36,6 +36,9 @@ extension ViewController {
         // Timelapse Control
         layoutTimelapseControl()
         
+        // Torch Button
+        layoutTorchButton()
+
         // Focus Button
         layoutFocusButton()
         
@@ -80,6 +83,7 @@ extension ViewController {
         
         // Setting View
         layoutSettingView()
+        
     }
 
     private func layoutPreviewView() {
@@ -235,6 +239,24 @@ extension ViewController {
         f = CGRect(x: ViewController.CONTROL_GAP, y: timelapseIntervalLabel.frame.height + timelapseIntervalLabel.frame.origin.y + 4, width: 104, height: 29)
         timelapseIntervalStepper.frame = f
     }
+    
+    private func layoutTorchButton() {
+        var f = CGRect(x: 0, y: 0, width: 32, height: 32)
+        switch UIDevice.current.orientation {
+        case .landscapeLeft, .landscapeRight:
+            f.origin.x = ViewController.SCREEN_MARGIN
+            f.origin.y = ViewController.SCREEN_MARGIN + (f.height + ViewController.CONTROL_GAP) * 3
+            break
+        case .portrait:
+            f.origin.x = UIScreen.main.bounds.width - (ViewController.SCREEN_MARGIN + f.width * 4 + ViewController.CONTROL_GAP * 3)
+            f.origin.y = 24
+            break
+        default:
+            break
+        }
+        torchButton.frame = f
+    }
+
     
     private func layoutFocusButton() {
         var f = CGRect(x: 0, y: 0, width: 32, height: 32)

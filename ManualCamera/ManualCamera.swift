@@ -38,6 +38,11 @@ enum CameraShutterMode: Int {
     case manual = 1
 }
 
+enum TorchMode: Int {
+    case off = 0
+    case on = 1
+}
+
 class ManualCamera: Camera {
     
     var settingMode: CameraSettingMode = .none
@@ -113,7 +118,16 @@ class ManualCamera: Camera {
             }
         }
     }
-        
+    
+    var lightOn: TorchMode = .off {
+        didSet {
+            if lightOn == .off {
+                torchOff()
+            } else {
+                torchOn()
+            }
+        }
+    }
     
     override init() {
         super.init()
@@ -137,6 +151,7 @@ class ManualCamera: Camera {
         isoMode = .auto
         shutterMode = .auto
         selectedWhiteBalanceIndex = 0
+        lightOn = .off
 
         setContinuousAutoWhiteBalance()
         setContinuousAutoExposure()

@@ -51,7 +51,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var timelapseCountStepper: UIStepper!
     @IBOutlet weak var timelapseIntervalLabel: UILabel!
     @IBOutlet weak var timelapseIntervalStepper: UIStepper!
-
+    @IBOutlet weak var torchButton: UIButton!
     
     private let timerButtonImageNames: [String] = ["timer_off", "timer_2s", "timer_5s", "timer_10s"]
     private let flashButtonImageNames: [String] = ["flash_off", "flash_on", "flash_auto"]
@@ -148,7 +148,10 @@ class ViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if camera != nil { camera.start() }
+        if camera != nil {
+            camera.start()
+            layoutSubviews()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -337,6 +340,8 @@ class ViewController: UIViewController {
         timelapseIntervalStepper.maximumValue = Double(timelapseIntervalValues.count - 1)
         timelapseIntervalStepper.value = 0
         timelapseIntervalStepper.stepValue = 1
+
+        torchButton.tintColor = UIColor.gray
 
         layoutSubviews()
         
@@ -635,7 +640,12 @@ class ViewController: UIViewController {
     
     @IBAction func changeTimelapseInterval(_ sender: UIStepper) {
         timelapseIntervalLabel.text = "".appendingFormat("INTERVAL: %.1fS", timelapseIntervalValues[Int(timelapseIntervalStepper.value)])
-   }
+    }
+    
+    @IBAction func toggleTorch(_ sender: UIButton) {
+        camera.lightOn = camera.lightOn == .off ? .on : .off
+        torchButton.tintColor = camera.lightOn == .on ? UIColor.yellow : UIColor.gray
+    }
 }
 
 extension ViewController: UIGestureRecognizerDelegate {

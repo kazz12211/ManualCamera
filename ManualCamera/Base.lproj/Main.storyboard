@@ -256,7 +256,7 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mGM-m5-KV5">
-                                <rect key="frame" x="90" y="-29" width="240" height="128"/>
+                                <rect key="frame" x="-104" y="-29" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RKT-KE-O2g">
@@ -442,6 +442,15 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ROe-ih-91l">
+                                <rect key="frame" x="203" y="16" width="32" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" red="0.99942404029999998" green="0.98555368190000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" image="lightbulb"/>
+                                <connections>
+                                    <action selector="toggleTorch:" destination="BYZ-38-t0r" eventType="touchUpInside" id="o8H-Ag-R4G"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -481,6 +490,7 @@
                         <outlet property="timelapseView" destination="mGM-m5-KV5" id="NSD-Ua-Qca"/>
                         <outlet property="timerButton" destination="gJo-m4-TzK" id="yj4-oG-XHH"/>
                         <outlet property="timerControl" destination="WhZ-40-8HK" id="6Kw-FA-S6v"/>
+                        <outlet property="torchButton" destination="ROe-ih-91l" id="JCF-p6-eXn"/>
                         <outlet property="whiteBalanceButton" destination="ot9-Qh-G0F" id="YsZ-6c-KUu"/>
                         <outlet property="whiteBalanceLabel" destination="zG2-W1-ini" id="a85-I1-3AV"/>
                         <outlet property="whiteBalanceStepper" destination="NrG-Dg-X8X" id="OFG-Mm-MSj"/>
@@ -499,6 +509,7 @@
         <image name="flash_off" width="32" height="32"/>
         <image name="icon_camera" width="32" height="32"/>
         <image name="iso" width="32" height="32"/>
+        <image name="lightbulb" width="32" height="32"/>
         <image name="shutter" width="32" height="32"/>
         <image name="timelapse" width="32" height="32"/>
         <image name="timer_off" width="32" height="32"/>
