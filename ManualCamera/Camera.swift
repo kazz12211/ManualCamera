@@ -17,6 +17,7 @@ import Photos
     @objc optional func cameraDidFinishExposing(_ camera: Camera, device: AVCaptureDevice)
     @objc optional func cameraDidFinishWhiteBalancing(_ camera: Camera, device: AVCaptureDevice)
     @objc optional func cameraDidFinishSettingExposureTargetBias(_ camera: Camera, device: AVCaptureDevice)
+    @objc optional func cameraShouldSavePhoto(_ camera: Camera, photo: AVCapturePhoto, image: Data) -> Bool
 }
 
 class Camera : NSObject {
@@ -399,17 +400,25 @@ extension Camera: AVCapturePhotoCaptureDelegate {
         }
         if image == nil { return }
         
-        PHPhotoLibrary.shared().performChanges({
-            let creationRequest = PHAssetCreationRequest.forAsset()
-            creationRequest.addResource(with: .photo, data: image, options: nil)
-        }) { (success, failure) in
-            if success {
-                print("Photo saved")
-                if self._delegate != nil && self._delegate.responds(to: #selector(CameraDelegate.cameraDidSavePhoto(_:photo:savedImage:))) {
-                    self._delegate.cameraDidSavePhoto!(self, photo: photo, savedImage: image)
+        var shouldSave = true
+        
+        if _delegate != nil && _delegate.responds(to: #selector(CameraDelegate.cameraShouldSavePhoto(_:photo:image:))) {
+            shouldSave = _delegate.cameraShouldSavePhoto!(self, photo: photo, image: image)
+        }
+        
+        if shouldSave {
+            PHPhotoLibrary.shared().performChanges({
+                let creationRequest = PHAssetCreationRequest.forAsset()
+                creationRequest.addResource(with: .photo, data: image, options: nil)
+            }) { (success, failure) in
+                if success {
+                    print("Photo saved")
+                    if self._delegate != nil && self._delegate.responds(to: #selector(CameraDelegate.cameraDidSavePhoto(_:photo:savedImage:))) {
+                        self._delegate.cameraDidSavePhoto!(self, photo: photo, savedImage: image)
+                    }
+                } else {
+                    print("Could not save photo: \(String(describing: failure))")
                 }
-            } else {
-                print("Could not save photo: \(String(describing: failure))")
             }
         }
     }
