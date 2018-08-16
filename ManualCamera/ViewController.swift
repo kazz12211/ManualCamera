@@ -68,6 +68,7 @@ class ViewController: UIViewController {
     var authorized: Bool!
     var selfTimer: SelfTimer!
     var timelapse: Timelapse!
+    var timelapseQueue: DispatchQueue = DispatchQueue(label: "timelapse")
 
     private let timelapseCountValues: [Int] = [0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 120, 150, 180, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000]
     private let timelapseIntervalValues: [TimeInterval] = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600, 900, 1800, 3600]

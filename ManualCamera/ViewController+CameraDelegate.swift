@@ -7,6 +7,7 @@
 //
 
 import AVFoundation
+import Photos
 
 extension ViewController: CameraDelegate {
     
@@ -43,6 +44,33 @@ extension ViewController: CameraDelegate {
     func cameraDidFinishSettingExposureTargetBias(_ camera: Camera, device: AVCaptureDevice) {
         exposureLabel.text = "".appendingFormat("%.1f", device.exposureTargetBias)
         exposureValueLabel.text = "".appendingFormat("%.1f", device.exposureTargetBias)
+    }
+    
+    func cameraShouldSavePhoto(_ camera: Camera, photo: AVCapturePhoto) -> Bool {
+        return Int(timelapseCountStepper.value) == 0
+    }
+    
+    func cameraDelegatesToSavePhoto(_camera: Camera, photo: AVCapturePhoto, image: Data) {
+        timelapseQueue.async {
+            PHPhotoLibrary.shared().performChanges({
+                let creationRequest = PHAssetCreationRequest.forAsset()
+                creationRequest.addResource(with: .photo, data: image, options: nil)
+            }) { (success, failure) in
+                if success {
+                    print("Photo saved")
+                } else {
+                    print("Could not save photo: \(String(describing: failure))")
+                }
+            }
+        }
+    }
+    
+    func cameraDidSavePhoto(_ camera: Camera, photo: AVCapturePhoto, savedImage: Data) {
+        
+    }
+    
+    func cameraWillSavePhoto(_ camera: Camera, photo: AVCapturePhoto) -> Data? {
+        return photo.fileDataRepresentation()
     }
 }
 
