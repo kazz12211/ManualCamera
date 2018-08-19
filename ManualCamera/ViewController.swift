@@ -422,6 +422,7 @@ class ViewController: UIViewController {
     @IBAction func timerChanged(_ sender: UISegmentedControl) {
         timerControl.isHidden = true
         timerButton.setImage(UIImage(named: timerButtonImageNames[timerControl.selectedSegmentIndex]), for: .normal)
+        timerButton.tintColor = timerControl.isHidden ? UIColor.orange : UIColor.gray
     }
     
     @IBAction func showFlashControl(_ sender: UIButton) {
@@ -437,6 +438,7 @@ class ViewController: UIViewController {
         flashControl.isHidden = true
         camera.flashMode = flashMode()
         flashButton.setImage(UIImage(named: flashButtonImageNames[flashControl.selectedSegmentIndex]), for: .normal)
+        flashButton.tintColor = flashControl.isHidden ? UIColor.orange : UIColor.gray
     }
     
     @IBAction func showTimelapseControl(_ sender: UIButton) {
