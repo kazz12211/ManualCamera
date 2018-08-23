@@ -9,6 +9,8 @@
 import UIKit
 import AVFoundation
 import Photos
+import CoreAudio
+import MediaPlayer
 
 class ViewController: UIViewController {
 
@@ -69,6 +71,10 @@ class ViewController: UIViewController {
     var selfTimer: SelfTimer!
     var timelapse: Timelapse!
     var timelapseQueue: DispatchQueue = DispatchQueue(label: "timelapse")
+    
+    var initialVolume: Float = 0.0
+    var volumeView: MPVolumeView!
+
 
     private let timelapseCountValues: [Int] = [0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 120, 150, 180, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000]
     private let timelapseIntervalValues: [TimeInterval] = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600, 900, 1800, 3600]
@@ -150,6 +156,7 @@ class ViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if camera != nil {
+            startListeningVolumeButton()
             camera.start()
             layoutSubviews()
         }
@@ -157,10 +164,13 @@ class ViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if camera != nil { camera.stop() }
+        if camera != nil {
+            stopListeningVolumeButton()
+            camera.stop()
+        }
     }
     
-    @IBAction func takePhoto(_ sender: UIButton) {
+    @IBAction func takePhoto(_ sender: Any?) {
         if camera == nil || selfTimer.active {
             return
         }
@@ -648,6 +658,30 @@ class ViewController: UIViewController {
     @IBAction func toggleTorch(_ sender: UIButton) {
         camera.lightOn = camera.lightOn == .off ? .on : .off
         torchButton.tintColor = camera.lightOn == .on ? UIColor.yellow : UIColor.gray
+    }
+    // 出力音量の変化とカメラ露出を監視する
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "outputVolume" {
+            let newVolume = (change?[NSKeyValueChangeKey.newKey] as! NSNumber).floatValue
+            // 出力音量が上がったか下がったかによって処理を分岐する
+            if initialVolume > newVolume {
+                volumeDown()
+                initialVolume = newVolume
+                if initialVolume < 0.1 {
+                    initialVolume = 0.1
+                }
+            } else if initialVolume < newVolume {
+                volumeUp()
+                initialVolume = newVolume
+                if initialVolume > 0.9 {
+                    initialVolume = 0.9
+                }
+            }
+            // 一旦出力音量の監視をやめて出力音量を設定してから出力音量の監視を再開する
+            AVAudioSession.sharedInstance().removeObserver(self, forKeyPath: "outputVolume")
+            setVolume(initialVolume)
+            AVAudioSession.sharedInstance().addObserver(self, forKeyPath: "outputVolume", options: .new, context: nil)
+        }
     }
 }
 

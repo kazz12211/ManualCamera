@@ -38,7 +38,7 @@ extension ViewController {
         
         // Torch Button
         layoutTorchButton()
-
+        
         // Focus Button
         layoutFocusButton()
         
@@ -257,7 +257,6 @@ extension ViewController {
         torchButton.frame = f
     }
 
-    
     private func layoutFocusButton() {
         var f = CGRect(x: 0, y: 0, width: 32, height: 32)
         switch UIDevice.current.orientation {

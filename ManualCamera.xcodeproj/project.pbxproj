@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F83454E2212ECED20013E7ED /* ViewController+RemoteShutterSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83454E1212ECED20013E7ED /* ViewController+RemoteShutterSupport.swift */; };
+		F83454E4212ECEF60013E7ED /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F83454E3212ECEF60013E7ED /* CoreAudio.framework */; };
 		F838E86E211E959D00C96674 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838E86D211E959D00C96674 /* AppDelegate.swift */; };
 		F838E870211E959D00C96674 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838E86F211E959D00C96674 /* ViewController.swift */; };
 		F838E873211E959D00C96674 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F838E871211E959D00C96674 /* Main.storyboard */; };
@@ -30,6 +32,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F83454E1212ECED20013E7ED /* ViewController+RemoteShutterSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+RemoteShutterSupport.swift"; sourceTree = "<group>"; };
+		F83454E3212ECEF60013E7ED /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		F838E86A211E959D00C96674 /* ManualCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ManualCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F838E86D211E959D00C96674 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F838E86F211E959D00C96674 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -59,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F83454E4212ECEF60013E7ED /* CoreAudio.framework in Frameworks */,
 				F838E88D211E9AC700C96674 /* CoreImage.framework in Frameworks */,
 				F838E88B211E9ABC00C96674 /* AVFoundation.framework in Frameworks */,
 				F838E889211E9AB100C96674 /* CoreMedia.framework in Frameworks */,
@@ -106,6 +111,7 @@
 				F846D4CB21241C9C004E130C /* ViewController+CameraDelegate.swift */,
 				F846D4CD21241CE7004E130C /* ViewController+SelfTimerDelegate.swift */,
 				F846D4CF21241DB0004E130C /* ViewController+TimelapseDelegate.swift */,
+				F83454E1212ECED20013E7ED /* ViewController+RemoteShutterSupport.swift */,
 			);
 			path = ManualCamera;
 			sourceTree = "<group>";
@@ -113,6 +119,7 @@
 		F838E883211E9AA200C96674 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F83454E3212ECEF60013E7ED /* CoreAudio.framework */,
 				F838E88C211E9AC700C96674 /* CoreImage.framework */,
 				F838E88A211E9ABB00C96674 /* AVFoundation.framework */,
 				F838E888211E9AB100C96674 /* CoreMedia.framework */,
@@ -196,6 +203,7 @@
 			files = (
 				F838E88F211E9C0E00C96674 /* CameraConstants.swift in Sources */,
 				F846D4D021241DB0004E130C /* ViewController+TimelapseDelegate.swift in Sources */,
+				F83454E2212ECED20013E7ED /* ViewController+RemoteShutterSupport.swift in Sources */,
 				F838E882211E9A8000C96674 /* ManualCamera.swift in Sources */,
 				F838E891211E9E6700C96674 /* Camera.swift in Sources */,
 				F846D4CE21241CE7004E130C /* ViewController+SelfTimerDelegate.swift in Sources */,
