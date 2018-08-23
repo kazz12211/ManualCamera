@@ -346,7 +346,7 @@ extension ViewController {
         var f = CGRect(x: 0, y: 0, width: 72, height: 28)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
-            f.origin.x = ViewController.TOP_BAR_HEIGHT + 4 + timerControl.frame.width + ViewController.CONTROL_GAP
+            f.origin.x = ViewController.TOP_BAR_HEIGHT + ViewController.SCREEN_MARGIN
             f.origin.y = UIScreen.main.bounds.height - 46
             break
         case .portrait:
@@ -363,8 +363,8 @@ extension ViewController {
         var f = CGRect(x: 0, y: 0, width: 72, height: 30)
         switch UIDevice.current.orientation {
         case .landscapeLeft, .landscapeRight:
-            f.size.width = previewView.frame.width - (focusControl.frame.width + ViewController.SCREEN_MARGIN * 2 + timerControl.frame.width + ViewController.CONTROL_GAP)
-            f.origin.x = (ViewController.TOP_BAR_HEIGHT + 4 + focusControl.frame.width + ViewController.SCREEN_MARGIN + timerControl.frame.width + ViewController.CONTROL_GAP)
+            f.size.width = previewView.frame.width - (ViewController.SCREEN_MARGIN + focusControl.frame.width + ViewController.SCREEN_MARGIN + ViewController.CONTROL_GAP)
+            f.origin.x = (focusControl.frame.origin.x + focusControl.frame.width + ViewController.CONTROL_GAP)
             f.origin.y = UIScreen.main.bounds.height - 47
             break
         case .portrait:
